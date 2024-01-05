@@ -32,12 +32,11 @@ alias cdp='cd $HOME/Documents/Programming'
 alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 
 # Package manager
-alias xq='xbps-query'
-alias xqe='xbps-query -Rs'
-alias xqi='xbps-query -l'
-
-alias xin='doas xbps-install -Su'
-alias xre='doas xbps-remove -Ro'
+#alias xq='xbps-query'
+#alias xqe='xbps-query -Rs'
+#alias xqi='xbps-query -l'
+#alias xin='doas xbps-install -Su'
+#alias xre='doas xbps-remove -Ro'
 
 
 #----------------------------------------#
@@ -49,6 +48,7 @@ alias xre='doas xbps-remove -Ro'
 # Env
 export ENV='$HOME/.config/ksh/kshrc'
 export EDITOR='jmacs'
+
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
@@ -63,9 +63,9 @@ export ECORE_EVAS_ENGINE=wayland_egl
 
 # These can break Steam games. Set SDL_VIDEODRIVER=x11 in the Steam advanced options.
 # Possibly also disable the second variable entirely.
-#export SDL_VIDEODRIVER=wayland
+export SDL_VIDEODRIVER=wayland
 #export SDL_DYNAMIC_API=/usr/lib/libSDL2-2.0.so.0
 
-#export BEMENU_BACKEND=wayland
+export BEMENU_BACKEND=wayland
 
 export _JAVA_AWT_WM_NONREPARENTING=1
