@@ -48,7 +48,7 @@ alias xre='doas xbps-remove -Ro'
 
 # Env
 export ENV='$HOME/.config/ksh/kshrc'
-export EDITOR='mg'
+export EDITOR='jmacs'
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
