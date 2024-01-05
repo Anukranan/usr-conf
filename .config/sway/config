@@ -1,0 +1,256 @@
+#--------------------#
+# Anukranan          #
+# Sway configuration #
+#--------------------#
+# Contents:
+#	- Variables
+#	- Aesthetics
+#	- Autostart
+#	- Idle configuration
+#	- Keybindings
+#	- Modes
+#	- Status bar
+#
+# TODO:
+#	- Add brightness controls.
+#	- Add music player controls
+#	- Auto mount external devices.
+
+include "$HOME/.cache/wal/colors-sway"
+include "/etc/sway/config.d/*"
+
+#-------------------------------
+# Variables
+#-------------------------------
+
+# Colors
+	set $cf $foreground
+	set $cb $background
+	set $c1 $color1
+	set $c2 $color2
+	set $c3 $color3
+	set $c4 $color4
+	set $c5 $color5
+	set $c6 $color6
+	set $c7 $color7
+
+# Basic
+	set $mod Mod4
+	set $left Left
+	set $down Down
+	set $up Up
+	set $right Right
+
+# Aesthetics
+	set $bg $wallpaper
+	set $innergaps 4
+	set $font terminus
+	set $fontsize 10
+
+# Applications
+	set $term foot -L
+	#set $shell oksh -l # It does not automatically enter login mode, so this is required.
+
+# Menus
+	set $menucmd dmenu-wl_run -i -b -fn '$font $fontsize' -nb '$cb' -nf '$cf' -sb '$c3' -sf '$c7' -l 10
+	set $menu dmenu-wl_path | $menucmd | xargs swaymsg exec --
+
+# Commands
+	set $scrshotfile $HOME/Pictures/Screenshots/$(date +'%s.png')
+	set $scrshotscr grimshot save screen - | wl-copy -t image/png && wl-paste -t image/png > $scrshotfile
+	set $scrshotsel grimshot save area - | wl-copy -t image/png && wl-paste -t image/png > $scrshotfile
+
+	set $polkitagent /usr/libexec/polkit-gnome-authentication-agent-1
+
+	set $lockcmd swaylock -e -u -n -r -L -i $bg -s fill --font $font --font-size $fontsize
+
+# Screen
+	set $scr1 HDMI-A-2
+	set $scrres1 1920x1080@143.994Hz
+	set $scrpos1 0,0
+
+# Workspace names
+	set $ws1 1
+	set $ws2 2
+	set $ws3 3
+	set $ws4 4
+	set $ws5 5
+	set $ws6 6
+	set $ws7 7
+	set $ws8 8
+	set $ws9 9
+	set $ws10 0
+
+
+#-------------------------------
+# Aesthetics
+#-------------------------------
+
+# Wallpaper
+output $scr1 resolution $scrres1 position $scrpos1
+output * bg $bg fill
+
+# Borders
+titlebar_padding 10 2
+smart_borders on
+default_border pixel 2
+default_floating_border normal
+hide_edge_borders smart
+
+# Other
+gaps inner $innergaps
+font $font $fontsize
+popup_during_fullscreen ignore
+
+for_window [shell="xwayland"] title_format "%title [xwayland]"
+for_window [window_type="dialog"] floating enable
+for_window [window_role="dialog"] floating enable
+
+# Colors
+# client.class           <border> <background> <text> <indicator> <child_border>
+client.focused            $c6        $cb        $c7        $c1        $c6
+client.focused_inactive   $c1        $cb        $c7        $c1        $c1
+client.unfocused          $c1        $cb        $c7        $cb        $c1
+#client.urgent
+#client.placeholder
+
+client.background $cb
+
+
+#-------------------------------
+# Autostart
+#-------------------------------
+
+exec {
+	# User Daemons
+	$polkitagent &
+	pipewire
+	fnott
+	autotiling
+	wl-paste --watch clipman store
+	udiskie -a -n -T
+
+	# Scripts
+	$HOME/.config/sway/scripts/colorgen.sh $wallpaper
+}
+
+exec_always {
+	xrandr --output $(xrandr | grep -m 1 XWAYLAND | awk '{print $1;}') --primary
+}
+
+
+#-------------------------------
+# Key bindings
+#-------------------------------
+
+# Basic
+bindsym $mod+Shift+q kill
+floating_modifier $mod normal
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Judgment Draweth Nigh.' -B 'Yes.' 'swaymsg exit'
+bindsym $mod+Shift+l exec $lockcmd
+
+# Applications
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+
+# Movement
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# Workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+bindsym $mod+comma workspace prev
+bindsym $mod+period workspace next
+
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Layout
+bindsym $mod+h splith
+bindsym $mod+v splitv
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+f fullscreen
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+bindsym $mod+a focus parent
+
+
+#-------------------------------
+# External commands (audio, brightness, screenshots, etc.)
+#-------------------------------
+
+bindsym $mod+Print exec $scrshotscr
+bindsym $mod+Shift+Print exec $scrshotsel
+
+#bindsym XF86AudioPlay exec ""
+#bindsym XF86AudioNext exec ""
+#bindsym XF86AudioPrev exec ""
+
+bindsym XF86AudioMute exec "wpctl set-mute @DEFAULT_SINK@ toggle"
+bindsym XF86AudioRaiseVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%+"
+bindsym XF86AudioLowerVolume exec "wpctl set-volume @DEFAULT_SINK@ 5%-"
+
+#bindsym XF86MonBrightnessUp exec ""
+#bindsym XF86MonBrightnessDown exec ""
+
+
+#-------------------------------
+# Modes
+#-------------------------------
+
+# Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# Resize
+mode "resize" {
+	bindsym $left resize shrink width 10px
+	bindsym $down resize grow height 10px
+	bindsym $up resize shrink height 10px
+	bindsym $right resize grow width 10px
+
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+
+#-------------------------------
+# Status bar
+#-------------------------------
+
+bar {
+	swaybar_command waybar
+}
