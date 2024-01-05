@@ -17,8 +17,8 @@ PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> " # It just works.
 # Aesthetics
 #----------------------------------------#
 
-(cat ~/.cache/wal/sequences &)
-. ~/.cache/wal/colors-tty.sh
+(cat $HOME/.cache/wal/sequences &)
+. $HOME/.cache/wal/colors-tty.sh
 
 
 #----------------------------------------#
@@ -26,8 +26,6 @@ PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> " # It just works.
 #----------------------------------------#
 
 # Normal
-alias eg='emacs -nw'
-alias jg='jmacs'
 alias cdp='cd $HOME/Documents/Programming'
 alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 
@@ -49,6 +47,7 @@ alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 export ENV='$HOME/.config/ksh/kshrc'
 export EDITOR='jmacs'
 
+export XBPS_DISTDIR='$HOME/.local/bin/void-packages'
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
