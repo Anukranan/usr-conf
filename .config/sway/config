@@ -57,8 +57,8 @@ include "/etc/sway/config.d/*"
 
 # Commands
 	set $scrshotfile $HOME/Pictures/Screenshots/$(date +'%s.png')
-	set $scrshotscr grimshot save screen - | wl-copy -t image/png && wl-paste -t image/png > $scrshotfile
-	set $scrshotsel grimshot save area - | wl-copy -t image/png && wl-paste -t image/png > $scrshotfile
+	set $scrshotscr grimshot copy screen && wl-paste > $scrshotfile
+	set $scrshotsel grimshot copy area   && wl-paste > $scrshotfile
 
 	set $polkitagent /usr/libexec/polkit-gnome-authentication-agent-1
 
@@ -127,7 +127,7 @@ exec {
 	pipewire
 	fnott
 	autotiling
-	wl-paste --watch clipman store
+	wl-paste --watch clipman store --notify --unix --max-items=10
 	udiskie -a -n -T
 
 	# Scripts

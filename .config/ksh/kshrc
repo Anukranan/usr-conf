@@ -47,7 +47,7 @@ alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 export ENV='$HOME/.config/ksh/kshrc'
 export EDITOR='jmacs'
 
-export XBPS_DISTDIR='$HOME/.local/bin/void-packages'
+export XBPS_DISTDIR='/home/anukranan/.local/bin/void-packages'
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
