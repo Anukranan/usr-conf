@@ -35,7 +35,7 @@
         "tooltip-format-disconnected": "MPD (disconnected)"
     },
 
-    "pipewire": {
+    "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
         "format": "{volume}% ",
         "format-bluetooth": "B. {volume}%",
@@ -43,7 +43,6 @@
         "format-muted": "M.",
         "format-source": "{volume}%",
         "format-source-muted": "M.",
-        "on-click": "pavucontrol"
     },
 
     "tray": {

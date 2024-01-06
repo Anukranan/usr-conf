@@ -41,13 +41,17 @@ alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 # Environment variables
 #----------------------------------------#
 
-#export POSIXLY_CORRECT=yes
-
 # Env
 export ENV='$HOME/.config/ksh/kshrc'
 export EDITOR='jmacs'
 
+export POSIXLY_CORRECT=yes
+
 export XBPS_DISTDIR='/home/anukranan/.local/bin/void-packages'
+
+# Bemenu (need to fix those colors, by the by. Sigh!)
+export BEMENU_BACKEND=wayland
+export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
@@ -60,11 +64,6 @@ export ELM_ENGINE=wayland_egl
 export ELM_DISPLAY=wl
 export ECORE_EVAS_ENGINE=wayland_egl
 
-# These can break Steam games. Set SDL_VIDEODRIVER=x11 in the Steam advanced options.
-# Possibly also disable the second variable entirely.
 export SDL_VIDEODRIVER=wayland
-#export SDL_DYNAMIC_API=/usr/lib/libSDL2-2.0.so.0
-
-export BEMENU_BACKEND=wayland
 
 export _JAVA_AWT_WM_NONREPARENTING=1
