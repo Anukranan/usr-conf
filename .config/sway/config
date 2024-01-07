@@ -51,7 +51,7 @@ include "/etc/sway/config.d/*"
 
 # Menus
 	#set $menucmd dmenu-wl_run -i -b -fn '$font $fontsize' -nb '$cb' -nf '$cf' -sb '$c3' -sf '$c7' -l 10
-	set $menucmd bemenu-run -i -l 20 -P '>' -p '[run]' -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 \
+	set $menucmd bemenu-run -i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 \
 		--tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb \
 		--fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
 	set $menu $menucmd | xargs swaymsg exec --
@@ -80,7 +80,7 @@ include "/etc/sway/config.d/*"
 	set $ws7 7
 	set $ws8 8
 	set $ws9 9
-	set $ws10 0
+	set $ws10 10
 
 
 #-------------------------------
@@ -148,7 +148,7 @@ exec_always {
 bindsym $mod+Shift+q kill
 floating_modifier $mod normal
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Judgment Draweth Nigh.' -B 'Yes.' 'swaymsg exit'
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes.' 'swaymsg exit'
 bindsym $mod+Shift+l exec $lockcmd
 
 # Applications

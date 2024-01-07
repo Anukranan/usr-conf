@@ -29,12 +29,20 @@ PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> " # It just works.
 alias cdp='cd $HOME/Documents/Programming'
 alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 
-# Package manager
-#alias xq='xbps-query'
-#alias xqe='xbps-query -Rs'
-#alias xqi='xbps-query -l'
-#alias xin='doas xbps-install -Su'
-#alias xre='doas xbps-remove -Ro'
+# XBPS
+alias xq='xbps-query'
+alias xqe='xbps-query -Rs'
+alias xqi='xbps-query -l'
+
+alias xn='doas xbps-install'
+alias xns='doas xbps-install -Su'
+
+alias xr='doas xbps-remove'
+alias xrr='doas xbps-remove -Ro'
+
+# VPM
+alias vpm='doas vpm'
+alias rr='removerecursive'
 
 
 #----------------------------------------#
@@ -51,7 +59,7 @@ export XBPS_DISTDIR='/home/anukranan/.local/bin/void-packages'
 
 # Bemenu (need to fix those colors, by the by. Sigh!)
 export BEMENU_BACKEND=wayland
-export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
+export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1
