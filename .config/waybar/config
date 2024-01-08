@@ -53,11 +53,11 @@
     },
     "wireplumber": {
         "format": "{volume}% ",
-        "format-bluetooth": "b {volume}%",
-        "format-bluetooth-muted": "m",
-        "format-muted": "m",
+        "format-bluetooth": "B {volume}%",
+        "format-bluetooth-muted": "M",
+        "format-muted": "M",
         "format-source": "{volume}%",
-        "format-source-muted": "m",
+        "format-source-muted": "M",
     },
     "battery": {
         "bat": "BAT1",
