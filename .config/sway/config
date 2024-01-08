@@ -42,33 +42,37 @@ include "/etc/sway/config.d/*"
 
 # Aesthetics
 	set $bg $wallpaper
-	set $innergaps 4
+	set $inner_gaps 4
 	set $font terminus
-	set $fontsize 10
+	set $font_size 10
 
 # Applications
 	set $term foot -L
 
 # Menus
-	#set $menucmd dmenu-wl_run -i -b -fn '$font $fontsize' -nb '$cb' -nf '$cf' -sb '$c3' -sf '$c7' -l 10
 	set $menucmd bemenu-run -i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 \
 		--tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb \
 		--fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
 	set $menu $menucmd | xargs swaymsg exec --
 
 # Commands
-	set $scrshotfile $HOME/Pictures/Screenshots/$(date +'%s.png')
-	set $scrshotscr grimshot copy screen && wl-paste > $scrshotfile
-	set $scrshotsel grimshot copy area   && wl-paste > $scrshotfile
+	set $scrshot_file $HOME/Pictures/Screenshots/$(date +'%s.png')
+	set $scrshot_scr grimshot copy screen && wl-paste > $scrshot_file
+	set $scrshot_sel grimshot copy area   && wl-paste > $scrshot_file
 
 	set $polkitagent /usr/libexec/polkit-gnome-authentication-agent-1
 
-	set $lockcmd swaylock -e -u -n -r -L -i $bg -s fill --font $font --font-size $fontsize
+	set $lock swaylock -f -e -u -n -r -L -i $bg -s fill --font $font --font-size $fontsize
+	set $idle swayidle -w       \
+		timeout 300 '$lock' \
+		timeout 600 'swaymsg "output * dpms off"'   \
+			resume 'swaymsg "output * dpms on"' \
+		before-sleep '$lock'
 
-# Screen
+# Screens
 	set $scr1 HDMI-A-2
-	set $scrres1 1920x1080@143.994Hz
-	set $scrpos1 0,0
+	set $scr1_res 1920x1080@143.994Hz
+	set $scr1_pos 0,0
 
 # Workspace names
 	set $ws1 1
@@ -88,7 +92,7 @@ include "/etc/sway/config.d/*"
 #-------------------------------
 
 # Wallpaper
-output $scr1 resolution $scrres1 position $scrpos1
+output $scr1 resolution $scr1_res position $scr1_pos
 output * bg $bg fill
 
 # Borders
@@ -99,8 +103,8 @@ default_floating_border normal
 hide_edge_borders smart
 
 # Other
-gaps inner $innergaps
-font $font $fontsize
+gaps inner $inner_gaps
+font $font $font_size
 popup_during_fullscreen ignore
 
 for_window [shell="xwayland"] title_format "%title [xwayland]"
@@ -125,14 +129,18 @@ client.background $cb
 exec {
 	# User Daemons
 	$polkitagent &
+	udiskie -a -n -T
 	pipewire
+
 	fnott
 	autotiling
 	wl-paste --watch clipman store --notify --unix --max-items=10
-	udiskie -a -n -T
 
 	# Scripts
 	$HOME/.config/sway/scripts/colorgen.sh $wallpaper
+
+	# Other
+	$idle
 }
 
 exec_always {
@@ -148,8 +156,8 @@ exec_always {
 bindsym $mod+Shift+q kill
 floating_modifier $mod normal
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes.' 'swaymsg exit'
-bindsym $mod+Shift+l exec $lockcmd
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit?' -B 'Yes.' 'swaymsg exit'
+bindsym $mod+Shift+l exec $lock
 
 # Applications
 bindsym $mod+Return exec $term
@@ -178,9 +186,6 @@ bindsym $mod+8 workspace $ws8
 bindsym $mod+9 workspace $ws9
 bindsym $mod+0 workspace $ws10
 
-bindsym $mod+comma workspace prev
-bindsym $mod+period workspace next
-
 bindsym $mod+Shift+1 move container to workspace $ws1
 bindsym $mod+Shift+2 move container to workspace $ws2
 bindsym $mod+Shift+3 move container to workspace $ws3
@@ -191,6 +196,9 @@ bindsym $mod+Shift+7 move container to workspace $ws7
 bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
+
+bindsym $mod+comma workspace prev
+bindsym $mod+period workspace next
 
 # Layout
 bindsym $mod+h splith
@@ -212,8 +220,8 @@ bindsym $mod+a focus parent
 # External commands (audio, brightness, screenshots, etc.)
 #-------------------------------
 
-bindsym $mod+Print exec $scrshotscr
-bindsym $mod+Shift+Print exec $scrshotsel
+bindsym $mod+Print exec $scrshot_scr
+bindsym $mod+Shift+Print exec $scrshot_sel
 
 #bindsym XF86AudioPlay exec ""
 #bindsym XF86AudioNext exec ""

@@ -44,6 +44,9 @@ alias xrr='doas xbps-remove -Ro'
 alias vpm='doas vpm'
 alias rr='removerecursive'
 
+# VSV
+alias vsv='doas vsv'
+
 
 #----------------------------------------#
 # Environment variables
