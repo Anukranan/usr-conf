@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #-----------#
 # Anukranan #
 # kshrc     #
@@ -60,7 +58,7 @@ export POSIXLY_CORRECT=yes
 
 export XBPS_DISTDIR='/home/anukranan/.local/bin/void-packages'
 
-# Bemenu (need to fix those colors, by the by. Sigh!)
+# Bemenu (fix this...)
 export BEMENU_BACKEND=wayland
 export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
 

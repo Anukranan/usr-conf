@@ -1,12 +1,11 @@
-#--------------------#
-# Anukranan          #
-# Sway configuration #
-#--------------------#
+#-------------#
+# Anukranan   #
+# Sway config #
+#-------------#
 # Contents:
 #	- Variables
 #	- Aesthetics
 #	- Autostart
-#	- Idle configuration
 #	- Keybindings
 #	- Modes
 #	- Status bar
@@ -16,7 +15,7 @@
 #	- Add music player controls
 
 include "$HOME/.cache/wal/colors-sway"
-include "/etc/sway/config.d/*"
+
 
 #-------------------------------
 # Variables

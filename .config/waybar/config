@@ -1,31 +1,48 @@
-//---------------------//
-// Anukranan            |
-// Waybar configuration |
-//---------------------//
+//--------------//
+// Anukranan     |
+// Waybar config |
+//--------------//
 
 {
-    //"layer": "top",    // Waybar at top layer
-    "position": "top", // Waybar position (top|bottom|left|right)
-    "height": 20,      // Waybar height (to be removed for auto height)
-    //"width": 1280,  // Waybar width
-    "spacing": 4,      // Gaps between modules (4px)
+    //------------------------------//
+    // Layout.
+    //------------------------------//
 
-    "modules-left": ["sway/workspaces", "sway/mode"],
-    "modules-center": ["sway/window"],
-    "modules-right": ["mpd", "pulseaudio", "network", "tray", "clock"],
+    "layer": "top",
+    "position": "top",
+    "height": 20,
+    "spacing": 4,
 
-    // Modules configuration
-     "sway/workspaces": {
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode"
+    ],
+    "modules-center": [
+        "sway/window"
+    ],
+    "modules-right": [
+        "mpd",
+        "wireplumber",
+        "battery",
+        "network",
+        "tray",
+        "clock"
+    ],
+
+
+    //------------------------------//
+    // Modules.
+    //------------------------------//
+
+    "sway/workspaces": {
          "disable-scroll": true,
          "all-outputs": true,
          "warp-on-scroll": false,
          "format": "{name}",
     },
-
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-
     "mpd": {
         "format": "{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%",
         "format-disconnected": "MPD x",
@@ -34,22 +51,17 @@
         "tooltip-format": "MPD (connected)",
         "tooltip-format-disconnected": "MPD (disconnected)"
     },
-
-    "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
+    "wireplumber": {
         "format": "{volume}% ",
-        "format-bluetooth": "B. {volume}%",
-        "format-bluetooth-muted": "B. M.",
-        "format-muted": "M.",
+        "format-bluetooth": "b {volume}%",
+        "format-bluetooth-muted": "m",
+        "format-muted": "m",
         "format-source": "{volume}%",
-        "format-source-muted": "M.",
+        "format-source-muted": "m",
     },
-
     "tray": {
-        // "icon-size": 21,
-        "spacing": 10
+        "spacing": 1
     },
-
     "network": {
         "format-wifi": "{essid} ({signalStrength}%)",
         "format-ethernet": "{ipaddr}/{cidr}",
@@ -57,10 +69,8 @@
         "format-linked": "{ifname} (No IP)",
         "format-disconnected": "x",
     },
-    
     "clock": {
         "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%d %m %Y}"
     },
-
 }

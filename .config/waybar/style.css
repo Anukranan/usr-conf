@@ -1,12 +1,12 @@
-/*---------------------------*
-* Anukranan                  *
-* Waybar style configuration *
-*---------------------------*/
+/*-----------*
+ * Anukranan *
+ * style.css *
+ *-----------*/
 
 
-/**********************************
- * Pywal colors
- **********************************/
+/*--------------------------------*
+ * Style.
+ *--------------------------------*/
 
 @import "../../.cache/wal/colors-waybar.css";
 
@@ -20,7 +20,6 @@
 @define-color c6 @color6;
 @define-color c7 @color7;
 
-
 * {
     font-family: "terminus";
     font-size: 10px;
@@ -29,7 +28,10 @@
 }
 
 
-/* Window and module properties. Change color and background for a full bar. */
+/*--------------------------------*
+ * Window and module properties.
+ *--------------------------------*/
+
 #window {
     margin-top: 2px;
     padding-left: 4px;
@@ -55,15 +57,16 @@ window#waybar.hidden {
 }
 
 
-/**********************************
- * Common module properties
- **********************************/
+/*--------------------------------*
+ * Common module properties.
+ *--------------------------------*/
 
 #workspaces,
 #mode,
 #window,
 #mpd,
-#pulseaudio,
+#wireplumber,
+#battery,
 #network,
 #tray,
 #clock {
@@ -87,7 +90,10 @@ window#waybar.hidden {
     background: none;
 }
 
+#battery {
+    color:@c3
+}
+
 #network {
     color: @c3;
 }
-
