@@ -106,7 +106,7 @@ gaps inner $inner_gaps
 font $font $font_size
 popup_during_fullscreen ignore
 
-for_window [shell="xwayland"] title_format "%title [XWayland]"
+for_window [shell="xwayland"] title_format "%title [Xwayland]"
 for_window [window_type="dialog"] floating enable
 for_window [window_role="dialog"] floating enable
 
@@ -136,7 +136,7 @@ exec {
 	wl-paste --watch clipman store --notify --unix --max-items=10
 
 	# Scripts
-	$HOME/.config/sway/scripts/colorgen.sh $wallpaper
+	colorgen.sh $bg
 
 	# Other
 	$idle
