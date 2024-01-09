@@ -1,6 +1,6 @@
 #-----------#
 # Anukranan #
-# kshrc     #
+# bashrc    #
 #-----------#
 
 #----------------------------------------#
@@ -9,6 +9,9 @@
 
 [[ $- != *i* ]] && return
 PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> " # It just works.
+
+export PATH=$PATH:$HOME/.local/bin:$HOME/.local/bin/void-packages
+export POSIXLY_CORRECT=yes
 
 
 #----------------------------------------#
@@ -38,25 +41,13 @@ alias xns='doas xbps-install -Su'
 alias xr='doas xbps-remove'
 alias xrr='doas xbps-remove -Ro'
 
-# VPM
-alias vpm='doas vpm'
-alias rr='removerecursive'
-
-# VSV
-alias vsv='doas vsv'
-
 
 #----------------------------------------#
 # Environment variables
 #----------------------------------------#
 
 # Env
-export ENV='$HOME/.config/ksh/kshrc'
 export EDITOR='jmacs'
-
-export POSIXLY_CORRECT=yes
-
-export XBPS_DISTDIR='/home/anukranan/.local/bin/void-packages'
 
 # Bemenu (fix this...)
 export BEMENU_BACKEND=wayland

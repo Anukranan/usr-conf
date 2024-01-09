@@ -18,7 +18,7 @@ include "$HOME/.cache/wal/colors-sway"
 
 
 #-------------------------------
-# Variables
+# Variables.
 #-------------------------------
 
 # Colors
@@ -45,8 +45,8 @@ include "$HOME/.cache/wal/colors-sway"
 	set $font terminus
 	set $font_size 10
 
-# Applications
-	set $term foot -L
+# Applications (if you use oksh or another shell, you made need -L for a login shell)
+	set $term foot
 
 # Menus
 	set $menucmd bemenu-run -i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 \
@@ -106,7 +106,7 @@ gaps inner $inner_gaps
 font $font $font_size
 popup_during_fullscreen ignore
 
-for_window [shell="xwayland"] title_format "%title [xwayland]"
+for_window [shell="xwayland"] title_format "%title [XWayland]"
 for_window [window_type="dialog"] floating enable
 for_window [window_role="dialog"] floating enable
 
