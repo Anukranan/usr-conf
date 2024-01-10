@@ -32,13 +32,11 @@
 ; Minimal!
 (setq inhibit-startup-message t
       visible-bell t)
-
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 (set-fringe-mode 10)
-
 
 ; ewal (pywal theming).
 (use-package ewal
@@ -68,45 +66,21 @@
 ; UTF-8 and indentation / whitespace.
 (prefer-coding-system 'utf-8-unix)
 (set-language-environment "UTF-8")
-
 (setq-default tab-width 8
-      show-trailing-whitespace t
-      backward-delete-char-untabify-method 'hungry
-      indent-tabs-mode nil)
-
+              show-trailing-whitespace nil
+              backward-delete-char-untabify-method 'hungry
+              indent-tabs-mode nil)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (setq show-trailing-whitespace t)))
 
 ; Column stuff.
 (setq-default column-number-mode t
               display-fill-column-indicator-column 80)
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
-
-
-; LSP
-(use-package lsp-mode
-  :hook ((c-mode c++-mode java-mode latex-mode) . lsp-deferred)
-  :commands lsp)
-
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-doc-header)
-  (setq lsp-ui-doc-include-signature t)
-  (setq lsp-ui-doc-border (face-foreground 'default))
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-delay 0.05))
-
-(use-package lsp-java
-  :after lsp)
-
-(use-package lsp-latex
-  :after lsp
-  (add-hook 'tex-mode-hook   'lsp)
-  (add-hook 'latex-mode-hook 'lsp))
-
+(add-hook 'org-mode-hook  #'display-fill-column-indicator-mode)
 
 ; Java mode.
-(add-to-list 'load-path (format "%s/dist/jdee-2.4.1/lisp" my-jdee-path))
 (autoload 'jde-mode "jde" "JDE mode" t)
 (setq auto-mode-alist
       (append '(("\\.java\\'" . jde-mode)) auto-mode-alist))
@@ -124,7 +98,6 @@
          (steps (floor offset c-basic-offset)))
     (* (max steps 1)
        c-basic-offset)))
-
 (add-hook 'c-mode-common-hook
           (lambda ()
             (c-add-style
@@ -133,11 +106,15 @@
                         (arglist-cont-nonempty
                          c-lineup-gcc-asm-reg
                          c-lineup-arglist-tabs-only))))))
-
 (add-hook 'c-mode-hook
           (lambda ()
             (c-set-style "linux-tabs-only")
             (setq-default indent-tabs-mode t)))
+
+; Org Mode.
+(require 'org)
+(setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
 
 
 ;============================================
@@ -152,7 +129,7 @@
  '(custom-safe-themes
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
  '(package-selected-packages
-   '(ccls lsp-latex lsp-java lsp-ui lsp-mode achievements jdee magit nasm-mode auto-header ewal-spacemacs-themes ewal)))
+   '(auctex org-preview-html ccls lsp-latex lsp-java lsp-ui lsp-mode jdee magit nasm-mode auto-header ewal-spacemacs-themes ewal)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
