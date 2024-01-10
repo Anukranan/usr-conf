@@ -39,6 +39,7 @@
 (menu-bar-mode   -1)
 (set-fringe-mode 10)
 
+
 ; ewal (pywal theming).
 (use-package ewal
   :init (setq ewal-use-built-in-always-p nil
@@ -56,8 +57,8 @@
           (add-to-list 'default-frame-alist
                        `(font . ,(font-xlfd-name norm-font))))
   :config (progn
-            (load-theme 'ewal-spacemacs-modern t)
-            (enable-theme 'ewal-spacemacs-modern)))
+            (load-theme 'ewal-spacemacs-classic t)
+            (enable-theme 'ewal-spacemacs-classic)))
 
 
 ;============================================
@@ -73,10 +74,43 @@
       backward-delete-char-untabify-method 'hungry
       indent-tabs-mode nil)
 
+
 ; Column stuff.
 (setq-default column-number-mode t
               display-fill-column-indicator-column 80)
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+
+
+; LSP
+(use-package lsp-mode
+  :hook ((c-mode c++-mode java-mode latex-mode) . lsp-deferred)
+  :commands lsp)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05))
+
+(use-package lsp-java
+  :after lsp)
+
+(use-package lsp-latex
+  :after lsp
+  (add-hook 'tex-mode-hook   'lsp)
+  (add-hook 'latex-mode-hook 'lsp))
+
+
+; Java mode.
+(add-to-list 'load-path (format "%s/dist/jdee-2.4.1/lisp" my-jdee-path))
+(autoload 'jde-mode "jde" "JDE mode" t)
+(setq auto-mode-alist
+      (append '(("\\.java\\'" . jde-mode)) auto-mode-alist))
+
 
 ; C mode.
 (setq-default c-default-style "linux"
@@ -117,7 +151,8 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
- '(package-selected-packages '(magit nasm-mode auto-header ewal-spacemacs-themes ewal)))
+ '(package-selected-packages
+   '(ccls lsp-latex lsp-java lsp-ui lsp-mode achievements jdee magit nasm-mode auto-header ewal-spacemacs-themes ewal)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
