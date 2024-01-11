@@ -92,7 +92,8 @@
               indent-tabs-mode nil
               backward-delete-char-untabify-method 'hungry
               column-number-mode t
-              display-fill-column-indicator-column 80)
+              display-fill-column-indicator-column 80
+              global-display-line-numbers-mode t)
 
 (add-hook 'prog-mode-hook
           (lambda ()
@@ -102,20 +103,63 @@
            (lambda ()
              (setq indent-tabs-mode nil)))
 
-(add-hook '(prog-mode-hook org-mode-hook)
-	  #'display-fill-column-indicator-mode)
+(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+(add-hook 'org-mode-hook  #'display-fill-column-indicator-mode)
 
 ;-------------
-; LSP Mode.
+; IDE.
 ;-------------
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :init
-  (setq lsp-keymap-prefix "C-c l"))
+  (setq lsp-keymap-prefix "C-c l")
+  :hook ((c-mode . lsp)
+	 (c++-mode . lsp)
+	 (java-mode . lsp)))
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-position 'bottom))
+(use-package lsp-treemacs
+  :after lsp)
+(use-package lsp-ivy)
+
 (use-package dap-mode
   :after lsp-mode
   :config (dap-auto-configure-mode))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/usr/doc/prog")
+    (setq projectile-project-search-path '("~/usr/doc/prog")))
+  (setq projectile-switch-project-action #'projectile-dired))
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function
+   #'magit-display-buffer-same-window-except-diff-v1))
 
 ;-------------
 ; C mode.
@@ -146,11 +190,6 @@
             (c-set-style "linux-tabs-only")
             (setq-default indent-tabs-mode t)))
 
-;-------------
-; Java mode.
-;-------------
-
-(add-hook 'java-mode-hook #'lsp)
 
 ;-------------
 ; Org Mode.
@@ -172,7 +211,7 @@
  '(custom-safe-themes
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
  '(package-selected-packages
-   '(company lsp-java lsp-ui lsp-mode ess auctex org-preview-html magit nasm-mode ewal-spacemacs-themes ewal))
+   '(lsp-ivy company lsp-java lsp-ui lsp-mode ess auctex org-preview-html magit nasm-mode ewal-spacemacs-themes ewal))
  '(warning-suppress-log-types '((comp)))
  '(warning-suppress-types '((comp))))
 (custom-set-faces
