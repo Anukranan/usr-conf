@@ -48,7 +48,8 @@
                 norm-font (font-spec
                            :family "Termsyn"
                            :weight 'semi-bold
-                           :size 12.0))
+                           :size 14
+                           .0))
           (show-paren-mode +1)
           (global-hl-line-mode)
           (set-frame-font norm-font nil t)
@@ -81,15 +82,12 @@
 (add-hook 'org-mode-hook  #'display-fill-column-indicator-mode)
 
 ; Java mode.
-(autoload 'jde-mode "jde" "JDE mode" t)
-(setq auto-mode-alist
-      (append '(("\\.java\\'" . jde-mode)) auto-mode-alist))
-
+(require 'lsp-java)
+(add-hook 'java-mode-hook #'lsp)
 
 ; C mode.
 (setq-default c-default-style "linux"
               c-basic-indent 8)
-
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
   (let* ((anchor (c-langelem-pos c-syntactic-element))
@@ -129,7 +127,9 @@
  '(custom-safe-themes
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
  '(package-selected-packages
-   '(auctex org-preview-html ccls lsp-latex lsp-java lsp-ui lsp-mode jdee magit nasm-mode auto-header ewal-spacemacs-themes ewal)))
+   '(auctex org-preview-html ccls lsp-latex lsp-java lsp-ui lsp-mode jdee magit nasm-mode auto-header ewal-spacemacs-themes ewal))
+ '(warning-suppress-log-types '((comp)))
+ '(warning-suppress-types '((comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
