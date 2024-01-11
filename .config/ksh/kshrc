@@ -1,36 +1,47 @@
 #-----------#
 # Anukranan #
-# bashrc    #
+# shell rc  #
 #-----------#
 
 #----------------------------------------#
-# System
+# System.
 #----------------------------------------#
 
 [[ $- != *i* ]] && return
-PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> " # It just works.
-
-export PATH=$PATH:$HOME/.local/bin:$HOME/.local/bin/void-packages
-export POSIXLY_CORRECT=yes
 
 
 #----------------------------------------#
-# Aesthetics
+# Aesthetics.
 #----------------------------------------#
 
-(cat $HOME/.cache/wal/sequences &)
-. $HOME/.cache/wal/colors-tty.sh
+. $XDG_CACHE_HOME/wal/colors.sh
+cb=$background
+cf=$foreground
+c1=$color1
+c2=$color2
+c3=$color3
+c4=$color4
+c5=$color5
+c6=$color6
+c7=$color7
+
+(cat $XDG_CACHE_HOME/wal/sequences &)
+. $XDG_CACHE_HOME/wal/colors-tty.sh
 
 
 #----------------------------------------#
-# Aliases
+# Aliases.
 #----------------------------------------#
 
-# Normal
-alias cdp='cd $HOME/Documents/Programming'
+alias cdp='cd $XDG_DOCUMENTS_DIR/prog'
 alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
 
-# XBPS
+alias hist='clipman pick --tool=bemenu'
+alias rec='wf-recorder \
+	--audio=alsa_output.usb-Razer_Razer_Kraken_Ultimate_00000000-00.analog-stereo.monitor \
+	--buffrate=144 --framerate=60 -f $XDG_VIDEOS_DIR/rec/$(date +'%s.mp4')'
+
+# XBPS.
 alias xq='xbps-query'
 alias xqe='xbps-query -Rs'
 alias xqi='xbps-query -l'
@@ -43,15 +54,17 @@ alias xrr='doas xbps-remove -Ro'
 
 
 #----------------------------------------#
-# Environment variables
+# Environment variables.
 #----------------------------------------#
 
-# Env
 export EDITOR='jmacs'
 
-# Bemenu (fix this...)
+# Bemenu
 export BEMENU_BACKEND=wayland
-export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
+export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 \
+	--bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 \
+	--cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb \
+	--fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
 
 # Wayland
 export MOZ_ENABLE_WAYLAND=1

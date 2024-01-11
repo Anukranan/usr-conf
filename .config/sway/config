@@ -40,31 +40,30 @@ include "$HOME/.cache/wal/colors-sway"
 	set $right Right
 
 # Aesthetics
-	set $bg $wallpaper
+	# This is for setting the wallpaper. $wallpaper is used for scripts 
+	# that automatically call theming functions.
+	set $bg $HOME/usr/media/img/wal/w4.png
 	set $inner_gaps 4
 	set $font terminus
 	set $font_size 10
 
-# Applications (if you use oksh or another shell, you made need -L for a login shell)
-	set $term foot
+# Applications
+	set $term foot -L
 
 # Menus
-	set $menucmd bemenu-run -i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=$c3 --fn=terminus -W 0.5 \
-		--tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb \
-		--fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
-	set $menu $menucmd | xargs swaymsg exec --
+	set $menu_cmd bemenu-run -i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 --bdr=#697068 --fn=terminus -W 0.5 --tb=#101010 --tf=#697068 --fb=#101010 --ff=#697068 --cb=#bbc1bc --cf=#697068 --nb=#101010 --nf=#bbc1bc --hb=#697068 --hf=#101010 --fbb=#101010 --fbf=#bbc1bc --sb=#7F8A80 --sf=#697068 --ab=#101010 --af=#bbc1bc --scb=#101010 --scf=#697068
+	set $menu $menu_cmd | xargs swaymsg exec --
 
 # Commands
-	set $scrshot_file $HOME/Pictures/Screenshots/$(date +'%s.png')
-	set $scrshot_scr grimshot copy screen && wl-paste > $scrshot_file
-	set $scrshot_sel grimshot copy area   && wl-paste > $scrshot_file
+	set $scrshot_scr grimshot save screen
+	set $scrshot_sel grimshot save area
 
 	set $polkitagent /usr/libexec/polkit-gnome-authentication-agent-1
 
 	set $lock swaylock -f -e -u -n -r -L -i $bg -s fill --font $font --font-size $fontsize
 	set $idle swayidle -w       \
-		timeout 300 '$lock' \
-		timeout 600 'swaymsg "output * dpms off"'   \
+		timeout 900 '$lock' \
+		timeout 1200 'swaymsg "output * dpms off"'  \
 			resume 'swaymsg "output * dpms on"' \
 		before-sleep '$lock'
 
@@ -136,14 +135,10 @@ exec {
 	wl-paste --watch clipman store --notify --unix --max-items=10
 
 	# Scripts
-	colorgen.sh $bg
+	colorgen.sh $wallpaper
 
 	# Other
 	$idle
-}
-
-exec_always {
-	xrandr --output $(xrandr | grep -m 1 XWAYLAND | awk '{print $1;}') --primary
 }
 
 
@@ -161,7 +156,7 @@ bindsym $mod+Shift+l exec $lock
 # Applications
 bindsym $mod+Return exec $term
 bindsym $mod+d exec $menu
-
+ 
 # Movement
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
