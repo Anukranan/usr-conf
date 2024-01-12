@@ -55,8 +55,8 @@ include "$HOME/.cache/wal/colors-sway"
 	set $menu $menu_cmd | xargs swaymsg exec --
 
 # Commands
-	set $scrshot_scr grimshot save screen
-	set $scrshot_sel grimshot save area
+	set $scrshot_scr grimshot --notify save screen
+	set $scrshot_sel grimshot --notify save area
 
 	set $polkitagent /usr/libexec/polkit-gnome-authentication-agent-1
 

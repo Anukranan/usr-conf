@@ -3,9 +3,9 @@
 # Script to unify generating pywal colors and applying them to GTK using wpgtk.
 
 # Configs using pywal cached colors instead of the GTK theme:
-#  - .bashrc
-#  - .config/sway/config
-#  - .config/waybar/style.css
+#  - Shell configuration.
+#  - Sway configuration.
+#  - Waybar styling.
 
 # Generate colorscheme
 wal -i $1

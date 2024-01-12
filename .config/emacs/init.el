@@ -56,7 +56,7 @@
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
-(set-fringe-mode 10)
+(set-fringe-mode 5)
 
 ;-------------
 ; Theme.
@@ -81,42 +81,58 @@
 ; Basic.
 ;============================================
 
+(defun multi-hook (function hooks)
+  "Apply a function to multiple hooks."
+  (mapc (lambda (hook)
+          (add-hook hook function))
+        hooks))
+
 ;-------------
 ; General text, indentation, and whitespace settings.
 ;-------------
 
 (prefer-coding-system 'utf-8-unix)
 (set-language-environment "UTF-8")
-(setq-default show-trailing-whitespace nil
-              tab-width 8
-              indent-tabs-mode nil
+
+(setq-default tab-width 8
               backward-delete-char-untabify-method 'hungry
               column-number-mode t
               display-fill-column-indicator-column 80
-              global-display-line-numbers-mode t)
+              indent-tabs-mode t
+              show-trailing-whitespace t)
 
 (add-hook 'prog-mode-hook
           (lambda ()
-            (setq show-trailing-whitespace t
-                  indent-tabs-mode t)))
-(add-hook 'lisp-mode-hook
-           (lambda ()
-             (setq indent-tabs-mode nil)))
+            (setq show-trailing-whitespace t)
+            (if (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
+                (setq indent-tabs-mode nil)
+              (setq indent-tabs-mode t))))
+(add-hook 'text-mode-hook
+          (lambda ()
+            (setq show-trailing-whitespace nil)))
 
-(add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
-(add-hook 'org-mode-hook  #'display-fill-column-indicator-mode)
+(multi-hook #'display-line-numbers-mode
+            '(prog-mode-hook text-mode-hook org-mode-hook))
+(multi-hook #'display-fill-column-indicator-mode
+            '(prog-mode-hook text-mode-hook org-mode-hook))
 
 ;-------------
-; IDE.
+; IDE configuration.
 ;-------------
+
+; Performance suggestions from the lsp-mode website.
+(setq gc-cons-threshold 100000000
+      read-process-output-max (* 1024 1024)
+      lsp-idle-delay 0.500
+      lsp-log-io nil)
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
-  :hook ((c-mode . lsp)
-	 (c++-mode . lsp)
-	 (java-mode . lsp)))
+  :hook ((c-mode    . lsp)
+         (c++-mode  . lsp)
+         (java-mode . lsp)))
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
   :custom
@@ -169,7 +185,7 @@
               c-basic-indent 8)
 
 (defun c-lineup-arglist-tabs-only (ignored)
-  "Line up argument lists by tabs, not spaces"
+  "Line up argument lists by tabs, not spaces."
   (let* ((anchor (c-langelem-pos c-syntactic-element))
          (column (c-langelem-2nd-pos c-syntactic-element))
          (offset (- (1+ column) anchor))
