@@ -9,37 +9,39 @@
 
 [[ $- != *i* ]] && return
 
+export HISTFILE="$HOME/.cache/sh_history"
+export PATH=$PATH:$HOME/.local/bin
+export POSIXLY_CORRECT=yes
+export PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> "
+
 
 #----------------------------------------#
-# Aesthetics.
+# Theming.
 #----------------------------------------#
 
-. $XDG_CACHE_HOME/wal/colors.sh
-cb=$background
-cf=$foreground
-c1=$color1
-c2=$color2
-c3=$color3
-c4=$color4
-c5=$color5
-c6=$color6
-c7=$color7
+. $HOME/.cache/wal/colors.sh
+export cb=$background
+export cf=$foreground
+export c1=$color1
+export c2=$color2
+export c3=$color3
+export c4=$color4
+export c5=$color5
+export c6=$color6
+export c7=$color7
 
-(cat $XDG_CACHE_HOME/wal/sequences &)
-. $XDG_CACHE_HOME/wal/colors-tty.sh
+(cat $HOME/.cache/wal/sequences &)
+. $HOME/.cache/wal/colors-tty.sh
 
 
 #----------------------------------------#
 # Aliases.
 #----------------------------------------#
 
-alias cdp='cd $XDG_DOCUMENTS_DIR/prog'
 alias ls='ls --color=auto -A -T 2 -1 -X -r -h --group-directories-first'
+alias grep='grep --color=auto'
 
-alias hist='clipman pick --tool=bemenu'
-alias rec='wf-recorder \
-	--audio=alsa_output.usb-Razer_Razer_Kraken_Ultimate_00000000-00.analog-stereo.monitor \
-	--buffrate=144 --framerate=60 -f $XDG_VIDEOS_DIR/rec/$(date +'%s.mp4')'
+alias cdp='cd $HOME/var/doc/src'
 
 # XBPS.
 alias xq='xbps-query'
@@ -54,19 +56,14 @@ alias xrr='doas xbps-remove -Ro'
 
 
 #----------------------------------------#
-# Environment variables.
+# Environment.
 #----------------------------------------#
 
-export EDITOR='jmacs'
+export EDITOR='mg'
 
-# Bemenu
+# Wayland.
 export BEMENU_BACKEND=wayland
-export BEMENU_OPTS="-i -l 20 -P '>' -p '[run]' -c -w --fixed-height -B 2 \
-	--bdr=$c3 --fn=terminus -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 \
-	--cb=$c7 --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb \
-	--fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3"
 
-# Wayland
 export MOZ_ENABLE_WAYLAND=1
 
 export QT_QPA_PLATFORM=wayland-egl

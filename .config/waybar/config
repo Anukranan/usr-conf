@@ -21,7 +21,7 @@
         "sway/window"
     ],
     "modules-right": [
-        "mpd",
+        //"mpd",
         "wireplumber",
         "battery",
         "network",
@@ -43,14 +43,14 @@
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-    "mpd": {
-        "format": "{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%",
-        "format-disconnected": "MPD x",
-        "unknown-tag": "MPD N/A",
-        "interval": 2,
-        "tooltip-format": "MPD (connected)",
-        "tooltip-format-disconnected": "MPD (disconnected)"
-    },
+    //"mpd": {
+    //    "format": "{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%",
+    //    "format-disconnected": "MPD x",
+    //    "unknown-tag": "MPD N/A",
+    //    "interval": 2,
+    //    "tooltip-format": "MPD (connected)",
+    //    "tooltip-format-disconnected": "MPD (disconnected)"
+    //},
     "wireplumber": {
         "format": "{volume}% ",
         "format-bluetooth": "B {volume}%",

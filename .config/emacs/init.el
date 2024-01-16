@@ -1,23 +1,78 @@
-;============;
-; Anukranan  ;
-; init.el    ;
-;============;
+;;============\
+;; Anukranan  |
+;; init.el    |
+;;============/
 
-;============================================
-; Initialization.
-;============================================
+(setq user-init-file "~/.config/emacs/init.el"
+      user-emacs-directory "~/.config/emacs")
 
-(setq user-init-file "~/.config/emacs/init.el")
-(setq user-emacs-directory "~/.config/emacs")
+;;============================================
+;; Functions.
+;;============================================
+
+;;-------------
+;; Mode-specific.
+;;-------------
+
+(defun c-lineup-arglist-tabs-only (ignored)
+  "Line up argument lists by tabs, not spaces."
+  (let* ((anchor (c-langelem-pos c-syntactic-element))
+         (column (c-langelem-2nd-pos c-syntactic-element))
+         (offset (- (1+ column) anchor))
+         (steps (floor offset c-basic-offset)))
+    (* (max steps 1)
+       c-basic-offset)))
+
+;;-------------
+;; Settings.
+;;-------------
+
+(defun set-tabs-i (width)
+  "Set tab width."
+  (interactive "nTab width: ")
+  (setq-default tab-width width
+                tab-stop-width width
+                tab-stop-list (number-sequence width 120 width)
+                c-basic-indent width
+                c-basic-offset width))
+
+;; TODO: Make this work, and possibly make it apply automatically when
+;; it detects a large amount of tabs in a file.
+(defun set-reasonable-style-i ()
+  "Set buffer to sane values (use 8 width tabs, line arguments up by tabs)."
+  (interactive)
+  (lambda ()
+    (progn
+      (setq indent-tabs-mode t
+            c-default-style "linux")
+      (set-tabs-i 8)
+      (c-add-style
+       "linux-tabs-only"
+       '("linux" (c-offsets-alist
+                  (arglist-cont-nonempty
+                   c-lineup-gcc-asm-reg
+                   c-lineup-arglist-tabs-only))))
+      (c-set-style "linux-tabs-only"))))
 
 
-;============================================
-; Package management.
-;============================================
+;;-------------
+;; Utiltity.
+;;-------------
 
-;-------------
-; Archives.
-;-------------
+(defun add-hook-i (hook-list fn)
+  "Apply a function to one or more hooks."
+  (mapc (lambda (hook)
+          (add-hook hook fn))
+        hook-list))
+
+
+;;============================================
+;; Package management.
+;;============================================
+
+;;-------------
+;; Archives.
+;;-------------
 
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -26,29 +81,44 @@
 (add-to-list 'package-archives '("melpa"  . "https://melpa.org/packages/"))
 (package-initialize)
 
-(unless package-archive-contents
-  (package-refresh-contents))
 (unless (package-installed-p 'use-package)
+  (package-refresh-contents)
   (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-;-------------
-; Package list.
-;-------------
+;;-------------
+;; Package list.
+;;-------------
 
-;(setq '(package-selected-packages
-;   '(ess auctex org-preview-html magit nasm-mode ewal-spacemacs-themes ewal)))
+;; Development environment.
+(use-package lsp-mode)
+(use-package lsp-ui)
+(use-package lsp-ivy)
+(use-package company)
+(use-package company-box)
+(use-package projectile)
+(use-package counsel-projectile)
+(use-package magit)
+
+(use-package lsp-java)
+(use-package lsp-haskell)
+(use-package lsp-latex)
+(use-package auctex)
+(use-package slime)
+(use-package ess)
+
+(use-package ewal)
+(use-package ewal-spacemacs-themes)
 
 
-;============================================
-; Aesthetics.
-;============================================
-
-;-------------
-; Settings.
-;-------------
+;;============================================
+;; Theming.
+;;============================================
 
 (setq inhibit-startup-message t
       visible-bell t)
@@ -58,11 +128,7 @@
 (menu-bar-mode   -1)
 (set-fringe-mode 5)
 
-;-------------
-; Theme.
-;-------------
-
-(set-frame-font "Termsyn 10" nil t)
+(set-frame-font "Termsyn 11" nil t)
 
 (use-package ewal
   :init (setq ewal-use-built-in-always-p nil
@@ -77,50 +143,35 @@
             (enable-theme 'ewal-spacemacs-classic)))
 
 
-;============================================
-; Basic.
-;============================================
+;;============================================
+;; Basic.
+;;============================================
 
-(defun multi-hook (function hooks)
-  "Apply a function to multiple hooks."
-  (mapc (lambda (hook)
-          (add-hook hook function))
-        hooks))
+;;-------------
+;; General.
+;;-------------
 
-;-------------
-; General text, indentation, and whitespace settings.
-;-------------
-
-(prefer-coding-system 'utf-8-unix)
-(set-language-environment "UTF-8")
-
-(setq-default tab-width 8
+(setq-default indent-tabs-mode nil
               backward-delete-char-untabify-method 'hungry
               column-number-mode t
               display-fill-column-indicator-column 80
-              indent-tabs-mode t
-              show-trailing-whitespace t)
+              show-trailing-whitespace nil)
 
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace t)
-            (if (derived-mode-p 'lisp-mode 'emacs-lisp-mode)
-                (setq indent-tabs-mode nil)
-              (setq indent-tabs-mode t))))
-(add-hook 'text-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace nil)))
+(add-hook-i '(prog-mode-hook) '(lambda () (setq show-trailing-whitespace t)))
+(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
+            'display-line-numbers-mode)
+(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
+            'display-fill-column-indicator-mode)
 
-(multi-hook #'display-line-numbers-mode
-            '(prog-mode-hook text-mode-hook org-mode-hook))
-(multi-hook #'display-fill-column-indicator-mode
-            '(prog-mode-hook text-mode-hook org-mode-hook))
+(set-tabs-i 2)
+(prefer-coding-system 'utf-8-unix)
+(set-language-environment "UTF-8")
 
-;-------------
-; IDE configuration.
-;-------------
+;;-------------
+;; IDE configuration.
+;;-------------
 
-; Performance suggestions from the lsp-mode website.
+;; Performance suggestions from the lsp-mode website.
 (setq gc-cons-threshold 100000000
       read-process-output-max (* 1024 1024)
       lsp-idle-delay 0.500
@@ -128,18 +179,23 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook ((c-mode    . lsp)
-         (c++-mode  . lsp)
-         (java-mode . lsp)))
+  :init (setq lsp-keymap-prefix "C-c l")
+  :hook ((c-mode                 . lsp)
+         (c++-mode               . lsp)
+         (java-mode              . lsp)
+         (lisp-mode              . lsp)
+         (scheme-mode            . lsp)
+         (haskell-mode           . lsp)
+         (shell-script-mode      . lsp)
+         (ess-r-mode             . lsp)
+         (latex-mode             . lsp)
+         (makefile-mode          . lsp)
+         (makefile-automake-mode . lsp)))
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-position 'bottom))
+  :hook   (lsp-mode . lsp-ui-mode)
+  :custom (lsp-ui-doc-position 'bottom))
 (use-package lsp-treemacs
   :after lsp)
-(use-package lsp-ivy)
 
 (use-package dap-mode
   :after lsp-mode
@@ -148,12 +204,9 @@
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1)
+  :bind (:map company-active-map ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map ("<tab>" . company-indent-or-complete-common))
+  :custom (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 (use-package company-box
   :hook (company-mode . company-box-mode))
@@ -162,62 +215,54 @@
   :diminish projectile-mode
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/usr/doc/prog")
-    (setq projectile-project-search-path '("~/usr/doc/prog")))
-  (setq projectile-switch-project-action #'projectile-dired))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init (setq projectile-switch-project-action #'projectile-dired)
+  (when (file-directory-p "~/var/doc/src")
+    (setq projectile-project-search-path '("~/var/doc/src"))))
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
-(use-package magit
-  :custom
-  (magit-display-buffer-function
-   #'magit-display-buffer-same-window-except-diff-v1))
 
-;-------------
-; C mode.
-;-------------
-
-(setq-default c-default-style "linux"
-              c-basic-indent 8)
-
-(defun c-lineup-arglist-tabs-only (ignored)
-  "Line up argument lists by tabs, not spaces."
-  (let* ((anchor (c-langelem-pos c-syntactic-element))
-         (column (c-langelem-2nd-pos c-syntactic-element))
-         (offset (- (1+ column) anchor))
-         (steps (floor offset c-basic-offset)))
-    (* (max steps 1)
-       c-basic-offset)))
-
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
-(add-hook 'c-mode-hook
-          (lambda ()
-            (c-set-style "linux-tabs-only")
-            (setq-default indent-tabs-mode t)))
-
-
-;-------------
-; Org Mode.
-;-------------
-
-(setq org-todo-keywords
-      '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
-
-
-;============================================
-; Other
-;============================================
+;;============================================
+;; Other.
+;;============================================
+;; Ascii art from https://www.gnu.org/graphics/gnu-ascii.html
+;;  ,           ,
+;; /             \
+;;((__-^^-,-^^-__))
+;; `-_---' `---_-'
+;;  `--|o` 'o|--'
+;;     \  `  /
+;;      ): :(
+;;      :o_o:
+;;       "-"
+;;  ,           ,
+;; /             \
+;;((__-^^-,-^^-__))
+;; `-_---' `---_-'
+;;  `--|o` 'o|--'
+;;     \  `  /
+;;      ): :(
+;;      :o_o:
+;;       "-"
+;;  ,           ,
+;; /             \
+;;((__-^^-,-^^-__))
+;; `-_---' `---_-'
+;;  `--|o` 'o|--'
+;;     \  `  /
+;;      ): :(
+;;      :o_o:
+;;       "-"
+;;  ,           ,
+;; /             \
+;;((__-^^-,-^^-__))
+;; `-_---' `---_-'
+;;  `--|o` 'o|--'
+;;     \  `  /
+;;      ): :(
+;;      :o_o:
+;;       "-"
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -227,7 +272,7 @@
  '(custom-safe-themes
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
  '(package-selected-packages
-   '(lsp-ivy company lsp-java lsp-ui lsp-mode ess auctex org-preview-html magit nasm-mode ewal-spacemacs-themes ewal))
+   '(auctex slime counsel-projectile projectile company-box ewal ess lsp-latex lsp-java lsp-haskell magit company lsp-ivy lsp-ui lsp-mode ewal-spacemacs-themes))
  '(warning-suppress-log-types '((comp)))
  '(warning-suppress-types '((comp))))
 (custom-set-faces
