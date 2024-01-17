@@ -70,13 +70,13 @@ window#waybar.hidden {
 #network,
 #tray,
 #clock {
-	margin: 0px;
-	border-radius: 10px;
-	padding-left: 4px;
-	padding-right: 4px;
-	background: @cb;
-	color: @c7;
-	transition: none;
+    margin: 0px;
+    border-radius: 10px;
+    padding-left: 4px;
+    padding-right: 4px;
+    background: @cb;
+    color: @c7;
+    transition: none;
 }
 
 #workspaces button.active {
