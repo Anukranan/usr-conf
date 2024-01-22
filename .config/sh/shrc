@@ -3,25 +3,7 @@
 # shell rc  #
 #-----------#
 
-#----------------------------------------#
-# System.
-#----------------------------------------#
-
 [[ $- != *i* ]] && return
-
-export HISTFILE="$HOME/.cache/sh_history"
-export PATH=$PATH:$HOME/.local/bin
-export POSIXLY_CORRECT=yes
-export PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> "
-
-
-#----------------------------------------#
-# Theming.
-#----------------------------------------#
-
-(cat $HOME/.cache/wal/sequences &)
-. $HOME/.cache/wal/colors-tty.sh
-
 
 #----------------------------------------#
 # Aliases.
@@ -48,7 +30,11 @@ alias xrr='doas xbps-remove -Ro'
 # Environment.
 #----------------------------------------#
 
-export EDITOR='mg'
+export EDITOR=mg
+
+# Rust and Cargo.
+export RUSTUP_HOME=$HOME/.local/share/rust/rustup
+export CARGO_HOME=$HOME/.local/share/rust/cargo
 
 # Wayland.
 export BEMENU_BACKEND=wayland
@@ -66,3 +52,21 @@ export ECORE_EVAS_ENGINE=wayland_egl
 export SDL_VIDEODRIVER=wayland
 
 export _JAVA_AWT_WM_NONREPARENTING=1
+
+
+#----------------------------------------#
+# Theming.
+#----------------------------------------#
+
+(cat $HOME/.cache/wal/sequences &)
+. $HOME/.cache/wal/colors-tty.sh
+
+
+#----------------------------------------#
+# System.
+#----------------------------------------#
+
+export HISTFILE=$HOME/.cache/sh_history
+export PATH=$PATH:$HOME/.local/bin:$CARGO_HOME/bin
+export POSIXLY_CORRECT=yes
+export PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> "

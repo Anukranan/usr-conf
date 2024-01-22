@@ -4,24 +4,24 @@
 ;;============/
 
 ;; * TODO:
-;;   + Fix the set-reasonable-style-i function.
-;;   + Look over all of the hooks to ensure efficiency and cleanliness.
-;;   + Consider using eglot instead of lsp-mode.
-;;   + Consider using corfu instead of company.
-;;   + Consider using project.el instead of projectile.
-;;   + Consider using ido instead of ivy.
-;;   + Consider using gud instead of dap-mode.
+;;   + lsp-mode   -> eglot
+;;   + company    -> corfu or xref + configuration
+;;   + projectile -> project.el
+;;   + ivy        -> ido
+;;   + dap-mode   -> realgud/gud
+;;   + EDE mode and configuration?
+;;   + Compilation
+;;   + More Org-mode
 ;;   + Integrate desktop environment.
-;;     - File manager (dired + dired extensions).
-;;     - Use eshell most of the time?
-;;     - Control package manager.
-;;     - Method to play and view media, including querying youtube videos.
-;;     - Method to play spotify?
-;;     - EWW web browser.
-;;     - Org mode for... organization and notes.
-;; I would still like to reduce the amount of packages I use and their
-;; complexity, in order to maintain a fast emacs. However, I would also like
-;; to have a comfortable, complete system.
+;;     - Dired configuration: direx, ranger, other
+;;     - eshell configuration
+;;     - system-packages.el
+;;     - View media
+;;     - Query YouTube videos
+;;     - Play music / spotify music
+;; Basically, move everything into built-in packages and only have a few
+;; external packages. Reduce the size of the configuration while still making
+;; it a complete system for development, productivity, computer usage, etc.
 
 ;;============================================
 ;; Initialization.
@@ -72,15 +72,21 @@
     (* (max steps 1)
        c-basic-offset)))
 
-(defun linux-tab-style-i (width)
-  "Indent with tabs and set linux style for cc-mode."
+(defun tab-style-i (width)
+  "Indent with tabs and set tab width."
   (interactive "nTab width: ")
   (progn
     (setq indent-tabs-mode t
           tab-width width
           c-basic-indent width
-          c-basic-offset width
-          c-default-style "linux")
+          c-basic-offset width)))
+
+(defun linux-style-i (width)
+  "Indent with tabs and set linux style for cc-mode."
+  (interactive "nTab width: ")
+  (progn
+    (setq c-default-style "linux")
+    (tab-style-i width)
     (c-add-style
      "linux-tabs-only"
      '("linux" (c-offsets-alist
