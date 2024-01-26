@@ -4,24 +4,14 @@
 ;;============/
 
 ;; * TODO:
-;;   + lsp-mode   -> eglot
-;;   + company    -> corfu or xref + configuration
-;;   + projectile -> project.el
-;;   + ivy        -> ido
-;;   + dap-mode   -> realgud/gud
-;;   + EDE mode and configuration?
-;;   + Compilation
-;;   + More Org-mode
-;;   + Integrate desktop environment.
-;;     - Dired configuration: direx, ranger, other
-;;     - eshell configuration
-;;     - system-packages.el
-;;     - View media
-;;     - Query YouTube videos
-;;     - Play music / spotify music
-;; Basically, move everything into built-in packages and only have a few
-;; external packages. Reduce the size of the configuration while still making
-;; it a complete system for development, productivity, computer usage, etc.
+;; - ido configuration for better auto-complete.
+;; - realgud for debugging?
+;; - vterm / eshell configuration.
+;; - Integrate more desktop environment.
+;;   + Sway
+;;   + Spotify / Music / Youtube / Etc.
+;;   + More dired configuration.
+;; - Check over everything to ensure consistency and cleanliness.
 
 ;;============================================
 ;; Initialization.
@@ -32,8 +22,12 @@
             (message "* Booted in %s seconds with %d garbage collections."
                      (emacs-init-time "%.2f") gcs-done)))
 
-(setq gc-cons-threshold 100000000
-      read-process-output-max (* 1024 1024))
+(add-hook 'after-init-hook
+          `(lambda ()
+             (setq gc-cons-threshold (* 2 1000 1000)
+                   gc-cons-percentage 0.1
+                   read-process-output-max (* 1024 1024)))
+          t)
 
 (setq user-init-file "~/.config/emacs/init.el"
       user-emacs-directory "~/.config/emacs"
@@ -42,22 +36,18 @@
       initial-major-mode 'emacs-lisp-mode
       visible-bell t)
 
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 (set-fringe-mode  5)
 
-(prefer-coding-system 'utf-8-unix)
-(set-language-environment "UTF-8")
-
 
 ;;============================================
 ;; Functions.
 ;;============================================
-
-;; Internally defined functions are post-pended with '-i'. Functions sourced
-;; externally without change are not.
 
 ;;-------------
 ;; Settings.
@@ -75,11 +65,10 @@
 (defun tab-style-i (width)
   "Indent with tabs and set tab width."
   (interactive "nTab width: ")
-  (progn
-    (setq indent-tabs-mode t
-          tab-width width
-          c-basic-indent width
-          c-basic-offset width)))
+  (setq indent-tabs-mode t
+        tab-width width
+        c-basic-indent width
+        c-basic-offset width))
 
 (defun linux-style-i (width)
   "Indent with tabs and set linux style for cc-mode."
@@ -105,14 +94,34 @@
           (add-hook hook fn))
         hook-list))
 
+(defun xdg-open-i (file)
+  "Open a file using xdg-open."
+  (interactive "f")
+  (let ((process-connection-type nil))
+    (start-process
+     "" nil shell-file-name
+     shell-command-switch
+     (format "nohup 1>/dev/null 2>/dev/null xdg-open %s"
+             (shell-quote-argument (expand-file-name file))))))
+
+(defun manual-open-i (application file)
+  "Open a file using a specified application."
+  (interactive "sApplication: \nf")
+  (let ((process-connection-type nil))
+    (start-process
+     "" nil shell-file-name
+     shell-command-switch
+     (format "nohup 1>/dev/null 2>/dev/null %s %s"
+             (shell-quote-argument application)
+             (shell-quote-argument (expand-file-name file))))))
+
 
 ;;============================================
 ;; Package management.
 ;;============================================
 
 (require 'package)
-(setq package-enable-at-startup nil
-      package-native-compile t)
+(setq package-native-compile t)
 (add-to-list 'package-archives '("gnu"    . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
 (add-to-list 'package-archives '("melpa"  . "https://melpa.org/packages/"))
@@ -122,12 +131,11 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(eval-and-compile
-  (setq use-package-always-ensure t
-        use-package-expand-minimally t))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
+(eval-when-compile (require 'use-package))
+(setq use-package-always-ensure t
+      use-package-verbose t
+      use-package-expand-minimally t
+      native-comp-async-report-warnings-errors nil)
 
 
 ;;============================================
@@ -142,13 +150,77 @@
               indent-tabs-mode nil
               backward-delete-char-untabify-method 'hungry
               display-fill-column-indicator-column 80
-              column-number-mode t)
+              column-number-mode t
+              history-length 1000
+              use-dialog-box nil
+              delete-by-moving-to-trash t
+              create-lockfiles nil
+              auto-save-default nil)
 
-(add-hook-i '(prog-mode-hook) '(lambda () (setq show-trailing-whitespace t)))
+(setq show-paren-context-when-offscreen 'overlay)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+(show-paren-mode 1)
+(global-hl-line-mode)
+
+(prefer-coding-system 'utf-8-unix)
+(set-language-environment "UTF-8")
+
+(add-hook-i '(prog-mode-hook)
+            '(lambda () (setq show-trailing-whitespace t)))
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             'display-line-numbers-mode)
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             'display-fill-column-indicator-mode)
+
+;;-------------
+;; Desktop environment.
+;;-------------
+
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :hook ((dired-mode . hl-line-mode)
+         (dired-mode . dired-hide-details-mode))
+  :bind (:map dired-mode-map
+              ("-" . dired-up-directory)
+              ("C-c o" . xdg-open-i)
+              ("C-c e" . manual-open-i))
+  :init
+  (setq dired-mouse-drag-files t)
+  (setq dired-bind-jump nil)
+  :config
+  (setq dired-listing-switches "-AghoD --color=auto --group-directories-first")
+  (require 'dired-x)
+  (setq dired-kill-when-opening-new-dired-buffer t))
+
+(use-package proced)
+
+(use-package transmission)
+
+;;-------------
+;; Development environment.
+;;-------------
+
+(use-package ido
+  :ensure t
+  :hook (((ido-mode) . ido-everywhere)
+         ((fundamental-mode prog-mode text-mode org-mode eglot-mode)
+          . ido-mode)))
+
+(use-package eglot
+  :ensure t
+  :hook (((c-mode c++-mode rust-mode ess-r-mode java-mode)
+          . eglot-ensure))
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-events-buffer-size 0)
+  (eglot-extend-to-xref nil)
+  (eglot-ignored-server-capabilities
+   '(:documentFormattingProvider
+     :documentRangeFormattingProvider
+     :documentOnTypeFormattingProvider))
+  (eglot-stay-out-of '(yasnippet)))
 
 ;;-------------
 ;; Theming.
@@ -161,113 +233,7 @@
               ewal-use-built-in-on-failure-p t))
 (use-package ewal-spacemacs-themes
   :init (progn
-          (setq spacemacs-theme-underline-parens t)
-          (show-paren-mode +1)
-          (global-hl-line-mode))
+          (setq spacemacs-theme-underline-parens t))
   :config (progn
             (load-theme 'ewal-spacemacs-classic t)
             (enable-theme 'ewal-spacemacs-classic)))
-
-;;-------------
-;; Desktop environment.
-;;-------------
-
-
-
-;;-------------
-;; Development environment.
-;;-------------
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-c l")
-  :hook ((c-mode                 . lsp)
-         (c++-mode               . lsp)
-         (java-mode              . lsp)
-         (lisp-mode              . lsp)
-         (scheme-mode            . lsp)
-         (haskell-mode           . lsp)
-         (shell-script-mode      . lsp)
-         (ess-r-mode             . lsp)
-         (latex-mode             . lsp)
-         (makefile-mode          . lsp)
-         (makefile-automake-mode . lsp)))
-(use-package lsp-ui
-  :hook   (lsp-mode . lsp-ui-mode)
-  :custom (lsp-ui-doc-position 'bottom))
-(use-package lsp-treemacs
-  :after lsp)
-
-(use-package dap-mode
-  :after lsp-mode
-  :config (dap-auto-configure-mode))
-
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map ("<tab>" . company-indent-or-complete-common))
-  :custom (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-
-
-;;============================================
-;; Other.
-;;============================================
-;; Ascii art from https://www.gnu.org/graphics/gnu-ascii.html
-;;  ,           ,
-;; /             \
-;;((__-^^-,-^^-__))
-;; `-_---' `---_-'
-;;  `--|o` 'o|--'
-;;     \  `  /
-;;      ): :(
-;;      :o_o:
-;;       "-"
-;;  ,           ,
-;; /             \
-;;((__-^^-,-^^-__))
-;; `-_---' `---_-'
-;;  `--|o` 'o|--'
-;;     \  `  /
-;;      ): :(
-;;      :o_o:
-;;       "-"
-;;  ,           ,
-;; /             \
-;;((__-^^-,-^^-__))
-;; `-_---' `---_-'
-;;  `--|o` 'o|--'
-;;     \  `  /
-;;      ): :(
-;;      :o_o:
-;;       "-"
-;;  ,           ,
-;; /             \
-;;((__-^^-,-^^-__))
-;; `-_---' `---_-'
-;;  `--|o` 'o|--'
-;;     \  `  /
-;;      ): :(
-;;      :o_o:
-;;       "-"
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "e4a702e262c3e3501dfe25091621fe12cd63c7845221687e36a79e17cf3a67e0" "8a379e7ac3a57e64de672dd744d4730b3bdb88ae328e8106f95cd81cbd44e0b6" "2035a16494e06636134de6d572ec47c30e26c3447eafeb6d3a9e8aee73732396" "e28d05d3fdc7839815df9f4e6cebceb4a0ca4ed2371bee6d4b513beabee3feb7" "edf5e3ea8b3bbb4602feef2dfac8a6d5dae316fb78e84f360d55dfda0d37fa09" default))
- '(package-selected-packages
-   '(sway auctex slime company-box ewal ess lsp-latex lsp-java lsp-haskell magit company lsp-ivy lsp-ui lsp-mode ewal-spacemacs-themes))
- '(warning-suppress-log-types '((comp)))
- '(warning-suppress-types '((comp))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

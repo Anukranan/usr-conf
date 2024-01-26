@@ -5,18 +5,20 @@
 
 include "$HOME/.cache/wal/colors-sway"
 
+
 #-------------------------------
 # Variables.
 #-------------------------------
 
 # Basic.
+  # Aliases.
   set $mod   Mod4
   set $left  Left
   set $down  Down
   set $up    Up
   set $right Right
 
-# Colors.
+  # Colors.
   set $cf $foreground
   set $cb $background
   set $c1 $color1
@@ -27,34 +29,52 @@ include "$HOME/.cache/wal/colors-sway"
   set $c6 $color6
   set $c7 $color7
 
-# Theming.
+  # Workspace names.
+  set $ws1 1
+  set $ws2 2
+  set $ws3 3
+  set $ws4 4
+  set $ws5 5
+  set $ws6 6
+  set $ws7 7
+  set $ws8 8
+  set $ws9 9
+  set $ws10 10
+
+  # Theming.
   set $bg $HOME/var/media/img/wal/w4.png
   set $inner-gaps 4
   set $font terminus
   set $font-size 10
 
-# Applications and commands.
+# Applications and commands. (TODO: Make this better).
+  # Terminal.
   set $term foot -L
 
+  # Clipboard.
   set $clip-hist $HOME/.cache/clipboard_history.json
   set $clipd wl-paste --watch clipman store --histpath=$clip-hist \
-             --notify --max-items=30 --unix
+                      --notify --max-items=50 --unix
 
+  # Polkit.
   set $polkitagentd /usr/libexec/polkit-gnome-authentication-agent-1
 
-  set $menu_opts -i -l 20 -P '>' -c -w --fixed-height -B 2 --bdr=$c3 -W 0.5    \
-       --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3 --nb=$cb --nf=$cf \
-       --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb        \
-       --af=$cf --scb=$cb --scf=$c3
-  set $menu      bemenu-run $menu_opts --fn=$font -p '[run]'
-  set $menu-clip clipman pick -t bemenu -T="$menu_opts --fn=$font -p '[pick]'" \
+  # Menus.
+  set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 2 --bdr=$c3 -W 0.5 \
+                 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3      \
+                 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf    \
+                 --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
+  set $menu      bemenu-run $menu-opts --fn=$font -p '[run]'
+  set $menu-clip clipman pick -t bemenu -T="$menu-opts --fn=$font -p '[pick]'" \
                  --histpath=$clip-hist
   set $menu-run  $menu | xargs swaymsg exec --
 
+  # Screenshots.
   set $scrshot-file $HOME/var/media/img/scr/$(date +'%s.png')
   set $scrshot-scr grimshot --notify save screen - > $scrshot-file
   set $scrshot-sel grimshot --notify save area   - > $scrshot-file
-  
+
+  # Lock.
   set $lock swaylock -f -e -u -L -i $bg -s fill
   set $idle swayidle -w                                \
             timeout 900 '$lock'                        \
@@ -67,52 +87,53 @@ include "$HOME/.cache/wal/colors-sway"
   set $scr1_res 1920x1080@143.994Hz
   set $scr1_pos 0,0
 
-# Workspace names.
-  set $ws1 1
-  set $ws2 2
-  set $ws3 3
-  set $ws4 4
-  set $ws5 5
-  set $ws6 6
-  set $ws7 7
-  set $ws8 8
-  set $ws9 9
-  set $ws10 10
-
 
 #-------------------------------
 # Theming.
 #-------------------------------
 
+# Windows.
+  for_window {
+    [shell="xwayland"] title_format "%title [Xwayland]"
+
+    [window_role="dialog"]      floating enable
+    [window_role="pop-up"]      floating enable
+    [window_role="bubble"]      floating enable
+    [window_role="task_dialog"] floating enable
+    [window_role="Preferences"] floating enable
+    [window_role="About"]       floating enable
+
+    [window_type="dialog"]      floating enable
+    [window_type="menu"]        floating enable
+
+    [app_id="mpv"]              floating enable
+  }
+
 # Wallpaper.
-output $scr1 resolution $scr1_res position $scr1_pos
-output * bg $bg fill
+  output $scr1 resolution $scr1_res position $scr1_pos
+  output * bg $bg fill
 
 # Borders.
-smart_borders on
-hide_edge_borders smart
-titlebar_padding 10 2
-default_border pixel 2
-default_floating_border normal
+  smart_borders on
+  hide_edge_borders smart
+  titlebar_padding 10 2
+  default_border pixel 2
+  default_floating_border normal
 
 # Other.
-gaps inner $inner-gaps
-font $font $font-size
-popup_during_fullscreen ignore
-
-for_window [shell="xwayland"] title_format "%title [Xwayland]"
-for_window [window_type="dialog"] floating enable
-for_window [window_role="dialog"] floating enable
+  gaps inner $inner-gaps
+  font $font $font-size
+  popup_during_fullscreen ignore
 
 # Colors.
-# client.class           <border> <background> <text> <indicator> <child_border>
-client.focused            $c6        $cb        $c7        $c1        $c6
-client.focused_inactive   $c1        $cb        $c7        $c1        $c1
-client.unfocused          $c1        $cb        $c7        $cb        $c1
-#client.urgent
-#client.placeholder
+# client.class          <border> <background>  <text> <indicator> <child_border>
+  client.focused            $c6        $cb        $c7        $c1        $c6
+  client.focused_inactive   $c1        $cb        $c7        $c1        $c1
+  client.unfocused          $c1        $cb        $c7        $cb        $c1
+  #client.urgent
+  #client.placeholder
 
-client.background $cb
+  client.background $cb
 
 
 #-------------------------------
@@ -125,14 +146,15 @@ exec {
   pipewire
   udiskie
 
+  fnott
+  $clipd
+  $idle
+
   # Scripts.
   $HOME/.config/sway/scripts/theme-gen.sh $wallpaper
 
-  # Other.
-  fnott
-  autotiling
-  $clipd
-  $idle
+  # Workflow. (TODO: Make this better).
+  swaymsg "workspace $ws1; exec $term; exec $term; exec $term; workspace $ws3; exec firefox; workspace $ws4; exec lutris; workspace $ws2; exec emacs"
 }
 
 
@@ -141,84 +163,84 @@ exec {
 #-------------------------------
 
 # Basic.
-bindsym $mod+Shift+q kill
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+l exec $lock
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit?' -B 'Yes.' 'swaymsg exit'
+  bindsym $mod+Shift+q kill
+  bindsym $mod+Shift+c reload
+  bindsym $mod+Shift+l exec $lock
+  bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit?' -B 'Yes.' 'swaymsg exit'
 
 # Applications.
-bindsym $mod+Return exec $term
+  bindsym $mod+Return exec $term
 
-bindsym $mod+c exec $menu-clip
-bindsym $mod+d exec $menu-run
+  bindsym $mod+c exec $menu-clip
+  bindsym $mod+d exec $menu-run
 
-bindsym $mod+Print exec       $scrshot-scr
-bindsym $mod+Shift+Print exec $scrshot-sel
+  bindsym $mod+Print exec       $scrshot-scr
+  bindsym $mod+Shift+Print exec $scrshot-sel
  
 # Movement.
-bindsym $mod+$left  focus left
-bindsym $mod+$down  focus down
-bindsym $mod+$up    focus up
-bindsym $mod+$right focus right
+  bindsym $mod+$left  focus left
+  bindsym $mod+$down  focus down
+  bindsym $mod+$up    focus up
+  bindsym $mod+$right focus right
 
-bindsym $mod+Shift+$left  move left
-bindsym $mod+Shift+$down  move down
-bindsym $mod+Shift+$up    move up
-bindsym $mod+Shift+$right move right
+  bindsym $mod+Shift+$left  move left
+  bindsym $mod+Shift+$down  move down
+  bindsym $mod+Shift+$up    move up
+  bindsym $mod+Shift+$right move right
 
-floating_modifier $mod normal
+  floating_modifier $mod normal
 
 # Workspace.
-bindsym $mod+1 workspace $ws1
-bindsym $mod+2 workspace $ws2
-bindsym $mod+3 workspace $ws3
-bindsym $mod+4 workspace $ws4
-bindsym $mod+5 workspace $ws5
-bindsym $mod+6 workspace $ws6
-bindsym $mod+7 workspace $ws7
-bindsym $mod+8 workspace $ws8
-bindsym $mod+9 workspace $ws9
-bindsym $mod+0 workspace $ws10
+  bindsym $mod+1 workspace $ws1
+  bindsym $mod+2 workspace $ws2
+  bindsym $mod+3 workspace $ws3
+  bindsym $mod+4 workspace $ws4
+  bindsym $mod+5 workspace $ws5
+  bindsym $mod+6 workspace $ws6
+  bindsym $mod+7 workspace $ws7
+  bindsym $mod+8 workspace $ws8
+  bindsym $mod+9 workspace $ws9
+  bindsym $mod+0 workspace $ws10
 
-bindsym $mod+Shift+1 move container to workspace $ws1
-bindsym $mod+Shift+2 move container to workspace $ws2
-bindsym $mod+Shift+3 move container to workspace $ws3
-bindsym $mod+Shift+4 move container to workspace $ws4
-bindsym $mod+Shift+5 move container to workspace $ws5
-bindsym $mod+Shift+6 move container to workspace $ws6
-bindsym $mod+Shift+7 move container to workspace $ws7
-bindsym $mod+Shift+8 move container to workspace $ws8
-bindsym $mod+Shift+9 move container to workspace $ws9
-bindsym $mod+Shift+0 move container to workspace $ws10
+  bindsym $mod+Shift+1 move container to workspace $ws1
+  bindsym $mod+Shift+2 move container to workspace $ws2
+  bindsym $mod+Shift+3 move container to workspace $ws3
+  bindsym $mod+Shift+4 move container to workspace $ws4
+  bindsym $mod+Shift+5 move container to workspace $ws5
+  bindsym $mod+Shift+6 move container to workspace $ws6
+  bindsym $mod+Shift+7 move container to workspace $ws7
+  bindsym $mod+Shift+8 move container to workspace $ws8
+  bindsym $mod+Shift+9 move container to workspace $ws9
+  bindsym $mod+Shift+0 move container to workspace $ws10
 
-bindsym $mod+comma workspace prev
-bindsym $mod+period workspace next
+  bindsym $mod+comma workspace prev
+  bindsym $mod+period workspace next
 
 # Layout.
-bindsym $mod+f fullscreen
+  bindsym $mod+f fullscreen
 
-bindsym $mod+h splith
-bindsym $mod+v splitv
+  bindsym $mod+h splith
+  bindsym $mod+v splitv
 
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+  bindsym $mod+s layout stacking
+  bindsym $mod+w layout tabbed
+  bindsym $mod+e layout toggle split
 
-bindsym $mod+Shift+space floating toggle
-bindsym $mod+space       focus mode_toggle
-bindsym $mod+a           focus parent
+  bindsym $mod+Shift+space floating toggle
+  bindsym $mod+space       focus mode_toggle
+  bindsym $mod+a           focus parent
 
-# External.
-#bindsym XF86AudioPlay exec
-#bindsym XF86AudioNext exec
-#bindsym XF86AudioPrev exec
+# Other.
+  #bindsym XF86AudioPlay exec
+  #bindsym XF86AudioNext exec
+  #bindsym XF86AudioPrev exec
 
-bindsym XF86AudioMute exec        wpctl set-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
+  bindsym XF86AudioMute exec        wpctl set-mute @DEFAULT_SINK@ toggle
+  bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
+  bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
 
-#bindsym XF86MonBrightnessUp exec
-#bindsym XF86MonBrightnessDown exec
+  #bindsym XF86MonBrightnessUp exec
+  #bindsym XF86MonBrightnessDown exec
 
 
 #-------------------------------
@@ -226,8 +248,8 @@ bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
 #-------------------------------
 
 # Scratchpad.
-bindsym $mod+minus scratchpad show
-bindsym $mod+Shift+minus move scratchpad
+  bindsym $mod+minus scratchpad show
+  bindsym $mod+Shift+minus move scratchpad
 
 # Resize.
 mode "resize" {

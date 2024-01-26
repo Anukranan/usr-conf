@@ -32,10 +32,6 @@ alias xrr='doas xbps-remove -Ro'
 
 export EDITOR=mg
 
-# Rust and Cargo.
-export RUSTUP_HOME=$HOME/.local/share/rust/rustup
-export CARGO_HOME=$HOME/.local/share/rust/cargo
-
 # Wayland.
 export BEMENU_BACKEND=wayland
 
@@ -67,6 +63,6 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 #----------------------------------------#
 
 export HISTFILE=$HOME/.cache/sh_history
-export PATH=$PATH:$HOME/.local/bin:$CARGO_HOME/bin
+export PATH=$PATH:$HOME/.local/bin:$HOME/.local/bin/manual/jdtls/bin
 export POSIXLY_CORRECT=yes
 export PS1="\[\e[1;32m\][\u \W]\[\e[0m\]> "
