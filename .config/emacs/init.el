@@ -94,6 +94,7 @@
           (add-hook hook fn))
         hook-list))
 
+;; Unneeded, just use dired shell command...
 (defun xdg-open-i (file)
   "Open a file using xdg-open."
   (interactive "f")
