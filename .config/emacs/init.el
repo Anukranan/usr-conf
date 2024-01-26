@@ -173,6 +173,10 @@
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             'display-fill-column-indicator-mode)
 
+(add-hook-i '(asm-mode) '(tab-style-i 8))
+(add-hook-i '(c-mode-hook c++-mode-hook rust-mode-hook)
+            '(linux-style-i 8))
+
 ;;-------------
 ;; Desktop environment.
 ;;-------------
@@ -182,15 +186,11 @@
   :commands (dired)
   :hook ((dired-mode . hl-line-mode)
          (dired-mode . dired-hide-details-mode))
-  :bind (:map dired-mode-map
-              ("-" . dired-up-directory)
-              ("C-c o" . xdg-open-i)
-              ("C-c e" . manual-open-i))
   :init
   (setq dired-mouse-drag-files t)
   (setq dired-bind-jump nil)
   :config
-  (setq dired-listing-switches "-AghoD --color=auto --group-directories-first")
+  (setq dired-listing-switches "-AghoD --group-directories-first")
   (require 'dired-x)
   (setq dired-kill-when-opening-new-dired-buffer t))
 
