@@ -1,32 +1,70 @@
 #!/bin/sh
 
-# Script to unify generating pywal colors and applying them to GTK using wpgtk.
-# I have chosen to keep it in sway/scripts since it is only called in Sway.
+# Script to unify applying wal and GTK themes (wpg), light or dark, and with
+# internal or generated wal color schemes.
 
-# Configs using pywal cached colors instead of the GTK theme:
-#  - Shell rc.
-#  - Sway configuration.
-#  - Waybar styling.
+#--------------------
+# Variables.
+#--------------------
 
-# Generate colorscheme.
-wal -i $1
+ERROR_MSG=$'Error: invalid input\n'
+HELP_MSG=$'Usage: theme-gen.sh [options] [wallpaper/theme] \n    \
+           \t options: \n                                        \
+           \t\t arg 1: dark, light \n                            \
+           \t\t arg 2: wallpaper file or built-in pywal theme \n'
 
-# Ensure that FlatColor is installed.
-wpg-install.sh -g -i
 
-# Apply colorscheme to GTK.
-wpg -a $1
-wpg -ns $1
+THEME_COLOR=$1
+THEME_FILE=$2
 
-# Ensure proper GTK settings are in place.
-gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-gsettings set org.gnome.desktop.interface font-name "Terminus 10"
-gsettings set org.gnome.desktop.interface gtk-theme FlatColor
-gsettings set org.gnome.desktop.interface icon-theme FlattrColor
-gsettings set org.gnome.desktop.interface gtk-key-theme Emacs
+#--------------------
+# Functions.
+#--------------------
 
-gsettings set org.gtk.Settings.FileChooser show-hidden true
-gsettings set org.gtk.Settings.FileChooser sort-column name
-gsettings set org.gtk.Settings.FileChooser sort-directories-first true
-gsettings set org.gtk.Settings.FileChooser sort-order ascending
-gsettings set org.gtk.Settings.FileChooser type-format category
+# Use an internal pywal theme.
+theme_init() {
+  wal $1 --theme $3
+  wpg-install.sh -g -i
+  wpg $2 --theme $3
+}
+
+# Use a generated wallpaper theme.
+gen_init() {
+  wal $1 -i $2
+  wpg-install.sh -g -i
+  wpg $2 -a $3
+  wpg $2 -ns $3
+}
+
+die() {
+  echo $1
+  echo $2
+  exit 1
+}
+
+
+#--------------------
+# Main.
+#--------------------
+
+if [ ! $THEME_COLOR ] || [ ! $THEME_FILE ]; then
+  die "$ERROR_MSG" "$HELP_MSG"
+fi
+
+if [ $THEME_COLOR = "dark" ]; then
+  ARGS_WAL=""
+  ARGS_WPG=""
+  gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+elif [ $THEME_COLOR = "light" ]; then
+  ARGS_WAL="-l"
+  ARGS_WPG="-L"
+  gsettings set org.gnome.desktop.interface color-scheme prefer-light
+else
+  die "$ERROR_MSG" "$HELP_MSG"
+fi
+
+if [ -r $THEME_FILE ]; then
+  gen_init "$ARGS_WAL" "$ARGS_WPG" "$THEME_FILE"
+else
+  theme_init "$ARGS_WAL" "$ARGS_WPG" "$THEME_FILE"
+fi

@@ -43,9 +43,17 @@ include "$HOME/.cache/wal/colors-sway"
 
   # Theming.
   set $bg $HOME/var/media/img/wal/w4.png
+
   set $inner-gaps 4
   set $font terminus
   set $font-size 10
+
+  set $theme-file $wallpaper
+  Set $theme-color dark
+
+  set $gtk-theme FlatColor
+  set $icon-theme FlattrColor
+  set $gtk-key-theme Emacs
 
 # Applications and commands. (TODO: Make this better).
   # Terminal.
@@ -107,6 +115,7 @@ include "$HOME/.cache/wal/colors-sway"
     [window_type="menu"]        floating enable
 
     [app_id="mpv"]              floating enable
+    [app_id="imv"]              floating enable
   }
 
 # Wallpaper.
@@ -147,14 +156,25 @@ exec {
   udiskie
 
   fnott
+  autotiling
   $clipd
   $idle
 
   # Scripts.
-  $HOME/.config/sway/scripts/theme-gen.sh $wallpaper
+  $HOME/.config/sway/scripts/theme-gen.sh $theme-color $theme-file
+}
 
-  # Workflow. (TODO: Make this better).
-  swaymsg "workspace $ws1; exec $term; exec $term; exec $term; workspace $ws3; exec firefox; workspace $ws4; exec lutris; workspace $ws2; exec emacs"
+exec_always {
+  # GTK Settings.
+  gsettings set org.gnome.desktop.interface font-name "$font $font-size"
+  gsettings set org.gnome.desktop.interface gtk-theme "$gtk-theme"
+  gsettings set org.gnome.desktop.interface icon-theme "$icon-theme"
+  gsettings set org.gnome.desktop.interface gtk-key-theme "$gtk-key-theme"
+  gsettings set org.gtk.Settings.FileChooser show-hidden true
+  gsettings set org.gtk.Settings.FileChooser sort-column name
+  gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+  gsettings set org.gtk.Settings.FileChooser sort-order ascending
+  gsettings set org.gtk.Settings.FileChooser type-format category
 }
 
 

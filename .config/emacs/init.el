@@ -188,16 +188,20 @@
   :hook ((dired-mode . hl-line-mode)
          (dired-mode . dired-hide-details-mode))
   :init
-  (setq dired-mouse-drag-files t)
-  (setq dired-bind-jump nil)
+  (setq dired-mouse-drag-files t
+        dired-bind-jump nil)
   :config
-  (setq dired-listing-switches "-AghoD --group-directories-first")
   (require 'dired-x)
-  (setq dired-kill-when-opening-new-dired-buffer t))
+  (setq dired-kill-when-opening-new-dired-buffer t
+        dired-listing-switches "-AghoD --group-directories-first"))
 
 (use-package proced)
 
 (use-package transmission)
+
+(use-package sway)
+
+(use-package system-packages)
 
 ;;-------------
 ;; Development environment.
@@ -205,9 +209,8 @@
 
 (use-package ido
   :ensure t
-  :hook (((ido-mode) . ido-everywhere)
-         ((fundamental-mode prog-mode text-mode org-mode eglot-mode)
-          . ido-mode)))
+  :hook ((ido-mode . ido-everywhere)
+         ((fundamental-mode text-mode prog-mode special-mode) . ido-mode)))
 
 (use-package eglot
   :ensure t
@@ -222,6 +225,8 @@
      :documentRangeFormattingProvider
      :documentOnTypeFormattingProvider))
   (eglot-stay-out-of '(yasnippet)))
+
+(use-package magit)
 
 ;;-------------
 ;; Theming.
