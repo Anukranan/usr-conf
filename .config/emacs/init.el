@@ -4,13 +4,10 @@
 ;;============/
 
 ;; * TODO:
-;; - ido configuration for better auto-complete.
 ;; - realgud for debugging?
-;; - vterm / eshell configuration.
 ;; - Integrate more desktop environment.
 ;;   + Sway
 ;;   + Spotify / Music / Youtube / Etc.
-;;   + More dired configuration.
 ;; - Check over everything to ensure consistency and cleanliness.
 
 ;;============================================
@@ -23,20 +20,18 @@
                      (emacs-init-time "%.2f") gcs-done)))
 
 (add-hook 'after-init-hook
-          `(lambda ()
-             (setq gc-cons-threshold (* 2 1000 1000)
-                   gc-cons-percentage 0.1
-                   read-process-output-max (* 1024 1024)))
-          t)
+          (lambda ()
+            (setq gc-cons-threshold (* 2 1000 1000)
+                  gc-cons-percentage 0.1
+                  read-process-output-max (* 1024 1024))))
 
 (setq user-init-file "~/.config/emacs/init.el"
       user-emacs-directory "~/.config/emacs"
+      custom-file (expand-file-name "custom.el" user-emacs-directory)
       inhibit-startup-message t
       initial-scratch-message nil
       initial-major-mode 'emacs-lisp-mode
       visible-bell t)
-
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
@@ -62,59 +57,58 @@
     (* (max steps 1)
        c-basic-offset)))
 
-(defun tab-style-i (width)
-  "Indent with tabs and set tab width."
+(defun change-tab-width-i (width)
+  "Change `tab-width' interactively."
   (interactive "nTab width: ")
-  (setq indent-tabs-mode t
-        tab-width width
+  (setq tab-width width
         c-basic-indent width
         c-basic-offset width))
 
-(defun linux-style-i (width)
-  "Indent with tabs and set linux style for cc-mode."
-  (interactive "nTab width: ")
-  (progn
-    (setq c-default-style "linux")
-    (tab-style-i width)
-    (c-add-style
-     "linux-tabs-only"
-     '("linux" (c-offsets-alist
-                (arglist-cont-nonempty
-                 c-lineup-gcc-asm-reg
-                 c-lineup-arglist-tabs-only))))
-    (c-set-style "linux-tabs-only")))
+;;-------------
+;; Minor modes.
+;;-------------
+
+(define-minor-mode smart-tabs-style-i-mode ()
+  "Enables `indent-tabs-mode' and `smart-tabs-mode' locally in a buffer."
+  :init-value nil
+  :global nil
+  :lighter " STabs"
+  :version "29.2"
+  :require 'smart-tabs-mode
+  (if (not smart-tabs-style-i-mode)
+      (setq indent-tabs-mode nil
+            smart-tabs-mode nil)
+    (setq indent-tabs-mode t
+          smart-tabs-mode t)))
+
+(define-minor-mode linux-style-i-mode ()
+  "Sets the default `cc-mode' style to linux, and enables
+`c-lineup-arglist-tabs-only'."
+  :init-value nil
+  :global nil
+  :lighter " Linux"
+  :version "29.2"
+  (if (not linux-style-i-mode)
+      (custom-reevaluate-setting 'c-default-style)
+    (progn
+      (setq c-default-style "linux")
+      (c-add-style
+       "linux-tabs-only"
+       '("linux" (c-offsets-alist
+                  (arglist-cont-nonempty
+                   c-lineup-gcc-asm-reg
+                   c-lineup-arglist-tabs-only))))
+      (c-set-style "linux-tabs-only"))))
 
 ;;-------------
 ;; Utiltity.
 ;;-------------
 
-(defun add-hook-i (hook-list fn)
+(defun add-hook-i (hook-list function)
   "Apply a function to one or more hooks."
   (mapc (lambda (hook)
-          (add-hook hook fn))
+          (add-hook hook function))
         hook-list))
-
-;; Unneeded, just use dired shell command...
-(defun xdg-open-i (file)
-  "Open a file using xdg-open."
-  (interactive "f")
-  (let ((process-connection-type nil))
-    (start-process
-     "" nil shell-file-name
-     shell-command-switch
-     (format "nohup 1>/dev/null 2>/dev/null xdg-open %s"
-             (shell-quote-argument (expand-file-name file))))))
-
-(defun manual-open-i (application file)
-  "Open a file using a specified application."
-  (interactive "sApplication: \nf")
-  (let ((process-connection-type nil))
-    (start-process
-     "" nil shell-file-name
-     shell-command-switch
-     (format "nohup 1>/dev/null 2>/dev/null %s %s"
-             (shell-quote-argument application)
-             (shell-quote-argument (expand-file-name file))))))
 
 
 ;;============================================
@@ -128,15 +122,15 @@
 (add-to-list 'package-archives '("melpa"  . "https://melpa.org/packages/"))
 (package-initialize)
 
+(require 'use-package)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-
-(eval-when-compile (require 'use-package))
-(setq use-package-always-ensure t
-      use-package-verbose t
-      use-package-expand-minimally t
-      native-comp-async-report-warnings-errors nil)
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t
+        use-package-verbose t
+        native-comp-async-report-warnings-errors nil))
 
 
 ;;============================================
@@ -156,9 +150,8 @@
               use-dialog-box nil
               delete-by-moving-to-trash t
               create-lockfiles nil
-              auto-save-default nil)
-
-(setq show-paren-context-when-offscreen 'overlay)
+              auto-save-default nil
+              show-paren-context-when-offscreen 'overlay)
 
 (fset 'yes-or-no-p 'y-or-n-p)
 (show-paren-mode 1)
@@ -168,20 +161,17 @@
 (set-language-environment "UTF-8")
 
 (add-hook-i '(prog-mode-hook)
-            '(lambda () (setq show-trailing-whitespace t)))
+            #'(lambda () (setq show-trailing-whitespace t)))
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            'display-line-numbers-mode)
+            #'display-line-numbers-mode)
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            'display-fill-column-indicator-mode)
-
-(add-hook-i '(asm-mode) '(tab-style-i 8))
-(add-hook-i '(c-mode-hook c++-mode-hook rust-mode-hook)
-            '(linux-style-i 8))
+            #'display-fill-column-indicator-mode)
 
 ;;-------------
 ;; Desktop environment.
 ;;-------------
 
+;; File manager.
 (use-package dired
   :ensure nil
   :commands (dired)
@@ -195,23 +185,35 @@
   (setq dired-kill-when-opening-new-dired-buffer t
         dired-listing-switches "-AghoD --group-directories-first"))
 
+;; System process manager.
 (use-package proced)
 
+;; Torrent manager.
 (use-package transmission)
 
+;; Emacs window manager.
+(use-package popper)
+
+;; Window manager integration.
 (use-package sway)
 
+;; Package manager integration.
 (use-package system-packages)
 
 ;;-------------
 ;; Development environment.
 ;;-------------
 
+;; Completion system.
 (use-package ido
   :ensure t
-  :hook ((ido-mode . ido-everywhere)
-         ((fundamental-mode text-mode prog-mode special-mode) . ido-mode)))
+  :custom (setq ido-enable-flex-matching t
+                ido-use-filename-at-point 'guess
+                ido-create-new-buffer 'always
+                ido-everywhere t)
+  (ido-mode 1))
 
+;; LSP manager.
 (use-package eglot
   :ensure t
   :hook (((c-mode c++-mode rust-mode ess-r-mode java-mode)
@@ -226,6 +228,7 @@
      :documentOnTypeFormattingProvider))
   (eglot-stay-out-of '(yasnippet)))
 
+;; Git manager.
 (use-package magit)
 
 ;;-------------
