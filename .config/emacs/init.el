@@ -145,9 +145,10 @@
 ;; General settings.
 ;;-------------
 
-(setq-default tab-width 2
+(setq-default tab-width 8
               indent-tabs-mode nil
               backward-delete-char-untabify-method 'hungry
+              set-fill-column 80
               display-fill-column-indicator-column 80
               column-number-mode t
               next-line-add-newlines t
@@ -165,22 +166,28 @@
 (prefer-coding-system 'utf-8-unix)
 (set-language-environment "UTF-8")
 
-;; Whitespace-y stuff.
+;; Whitespace.
 (add-hook-i '(prog-mode-hook) #'display-line-numbers-mode)
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            #'(lambda () (setq show-trailing-whitespace t)))
+            #'auto-fill-mode)
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             #'display-fill-column-indicator-mode)
+(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
+            #'(lambda () (setq show-trailing-whitespace t)))
 
 ;; Style.
-(add-hook-i '(c-mode-hook c++-mode-hook java-mode-hook asm-mode-hook
-                          nasm-mode-hook shell-script-mode-hook
+(add-hook-i '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook
+                          asm-mode-hook nasm-mode-hook shell-script-mode-hook
                           makefile-mode-hook)
             #'smart-tabs-style-i-mode)
-(add-hook-i '(rust-mode-hook)
-            #'(lambda () (setq indent-tabs-mode nil
-                               display-fill-column-indicator-column 100)
-                (change-tab-width-i 4)))
+(add-hook-i '(c-mode-hook c++-mode-hook)
+            #'linux-style-i-mode)
+(add-hook-i '(java-mode-hook) ;; Technically Rust uses this style too...
+            #'(lambda ()
+                (progn
+                  (setq set-fill-column 100
+                        display-fill-column-indicator-column 100)
+                  (change-tab-width-i 4))))
 
 ;;-------------
 ;; Desktop environment.
