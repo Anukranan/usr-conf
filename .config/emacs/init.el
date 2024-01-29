@@ -33,6 +33,10 @@
       initial-major-mode 'emacs-lisp-mode
       visible-bell t)
 
+;;(setq fancy-splash-image
+;;      fancy-startup-text
+;;      fancy-about-text)
+
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
@@ -72,7 +76,7 @@
   "Enables `indent-tabs-mode' and `smart-tabs-mode' locally in a buffer."
   :init-value nil
   :global nil
-  :lighter " STabs"
+  :lighter " Stabs"
   :version "29.2"
   :require 'smart-tabs-mode
   (if (not smart-tabs-style-i-mode)
@@ -146,6 +150,7 @@
               backward-delete-char-untabify-method 'hungry
               display-fill-column-indicator-column 80
               column-number-mode t
+              next-line-add-newlines t
               history-length 1000
               use-dialog-box nil
               delete-by-moving-to-trash t
@@ -160,12 +165,22 @@
 (prefer-coding-system 'utf-8-unix)
 (set-language-environment "UTF-8")
 
-(add-hook-i '(prog-mode-hook)
+;; Whitespace-y stuff.
+(add-hook-i '(prog-mode-hook) #'display-line-numbers-mode)
+(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             #'(lambda () (setq show-trailing-whitespace t)))
 (add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            #'display-line-numbers-mode)
-(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
             #'display-fill-column-indicator-mode)
+
+;; Style.
+(add-hook-i '(c-mode-hook c++-mode-hook java-mode-hook asm-mode-hook
+                          nasm-mode-hook shell-script-mode-hook
+                          makefile-mode-hook)
+            #'smart-tabs-style-i-mode)
+(add-hook-i '(rust-mode-hook)
+            #'(lambda () (setq indent-tabs-mode nil
+                               display-fill-column-indicator-column 100)
+                (change-tab-width-i 4)))
 
 ;;-------------
 ;; Desktop environment.
@@ -180,6 +195,7 @@
   :init
   (setq dired-mouse-drag-files t
         dired-bind-jump nil)
+  :bind (:map dired-mode-map ("-" . dired-up-directory))
   :config
   (require 'dired-x)
   (setq dired-kill-when-opening-new-dired-buffer t
@@ -207,11 +223,12 @@
 ;; Completion system.
 (use-package ido
   :ensure t
-  :custom (setq ido-enable-flex-matching t
+  :init (ido-mode t)
+  :hook (((ido-mode) . ido-everywhere))
+  :custom (setq ido-everywhere t
+                ido-enable-flex-matching t
                 ido-use-filename-at-point 'guess
-                ido-create-new-buffer 'always
-                ido-everywhere t)
-  (ido-mode 1))
+                ido-create-new-buffer 'always))
 
 ;; LSP manager.
 (use-package eglot
@@ -241,8 +258,7 @@
   :init (setq ewal-use-built-in-always-p nil
               ewal-use-built-in-on-failure-p t))
 (use-package ewal-spacemacs-themes
-  :init (progn
-          (setq spacemacs-theme-underline-parens t))
+  :init (setq spacemacs-theme-underline-parens t)
   :config (progn
             (load-theme 'ewal-spacemacs-classic t)
             (enable-theme 'ewal-spacemacs-classic)))
