@@ -30,7 +30,7 @@ theme_init() {
 
 # Use a generated wallpaper theme.
 gen_init() {
-  wal $1 -i $2
+  wal $1 -i $3
   wpg-install.sh -g -i
   wpg $2 -a $3
   wpg $2 -ns $3
