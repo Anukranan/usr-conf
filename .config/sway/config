@@ -149,8 +149,8 @@ include "$HOME/.cache/wal/colors-sway"
 # Autostart.
 #-------------------------------
 
+# Daemons.
 exec {
-  # User daemons.
   $polkitagentd &
   pipewire
   udiskie
@@ -160,16 +160,19 @@ exec {
   $clipd
   $idle
 
-  # Scripts.
-  $HOME/.config/sway/scripts/theme-gen.sh $theme-color $theme-file
+  emacs --daemon
+  emacsclient -c
 }
 
-exec_always {
-  # GTK Settings.
+# Settings.
+exec {
+  $HOME/.config/sway/scripts/theme-gen.sh $theme-color $theme-file
+
   gsettings set org.gnome.desktop.interface font-name "$font $font-size"
   gsettings set org.gnome.desktop.interface gtk-theme "$gtk-theme"
   gsettings set org.gnome.desktop.interface icon-theme "$icon-theme"
   gsettings set org.gnome.desktop.interface gtk-key-theme "$gtk-key-theme"
+
   gsettings set org.gtk.Settings.FileChooser show-hidden true
   gsettings set org.gtk.Settings.FileChooser sort-column name
   gsettings set org.gtk.Settings.FileChooser sort-directories-first true
@@ -196,7 +199,7 @@ exec_always {
 
   bindsym $mod+Print exec       $scrshot-scr
   bindsym $mod+Shift+Print exec $scrshot-sel
- 
+
 # Movement.
   bindsym $mod+$left  focus left
   bindsym $mod+$down  focus down

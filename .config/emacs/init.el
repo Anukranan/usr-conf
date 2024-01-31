@@ -3,45 +3,47 @@
 ;; init.el    |
 ;;============/
 
-;; * TODO:
-;; - realgud for debugging?
-;; - Integrate more desktop environment.
-;;   + Sway
-;;   + Spotify / Music / Youtube / Etc.
-;; - Check over everything to ensure consistency and cleanliness.
-
 ;;============================================
 ;; Initialization.
 ;;============================================
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "* Booted in %s seconds with %d garbage collections."
-                     (emacs-init-time "%.2f") gcs-done)))
+(setq gc-cons-threshold (* 2 1000 1000)
+      gc-cons-percentage 0.1
+      read-process-output-max (* 1024 1024))
 
-(add-hook 'after-init-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 2 1000 1000)
-                  gc-cons-percentage 0.1
-                  read-process-output-max (* 1024 1024))))
+(setq-default user-emacs-directory "~/.config/emacs"
+              user-init-file (expand-file-name "init.el" user-emacs-directory)
+              custom-file (expand-file-name "custom.el" user-emacs-directory)
+              backup-directory-alist `(("." . "~/.cache/emacs/saves"))
+              auto-save-list-file-prefix "~/.cache/emacs/saves/autosaves-"
+              ido-save-directory-list-file "~/.cache/emacs/saves/ido_history")
 
-(setq user-init-file "~/.config/emacs/init.el"
-      user-emacs-directory "~/.config/emacs"
-      custom-file (expand-file-name "custom.el" user-emacs-directory)
-      inhibit-startup-message t
-      initial-scratch-message nil
-      initial-major-mode 'emacs-lisp-mode
-      visible-bell t)
+(setq-default backup-by-copying t
+              initial-major-mode 'emacs-lisp-mode
+              initial-scratch-message nil
+              inhibit-startup-message t)
 
-;;(setq fancy-splash-image
-;;      fancy-startup-text
-;;      fancy-about-text)
 
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-(set-fringe-mode  5)
+;;============================================
+;; Package management.
+;;============================================
+
+(require 'package)
+(setq-default package-native-compile t
+              native-comp-async-report-warnings-errors nil)
+(add-to-list 'package-archives '("gnu"    . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives '("melpa"  . "https://melpa.org/packages/"))
+(package-initialize)
+
+(require 'use-package)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-and-compile
+  (setq-default use-package-always-ensure t
+                use-package-expand-minimally t
+                use-package-verbose t))
 
 
 ;;============================================
@@ -61,7 +63,7 @@
     (* (max steps 1)
        c-basic-offset)))
 
-(defun change-tab-width-i (width)
+(defun customize-tab-width (width)
   "Change `tab-width' interactively."
   (interactive "nTab width: ")
   (setq tab-width width
@@ -72,27 +74,23 @@
 ;; Minor modes.
 ;;-------------
 
-(define-minor-mode smart-tabs-style-i-mode ()
+(define-minor-mode stabs-mode ()
   "Enables `indent-tabs-mode' and `smart-tabs-mode' locally in a buffer."
   :init-value nil
-  :global nil
   :lighter " Stabs"
-  :version "29.2"
   :require 'smart-tabs-mode
-  (if (not smart-tabs-style-i-mode)
+  (if (not stabs-mode)
       (setq indent-tabs-mode nil
             smart-tabs-mode nil)
     (setq indent-tabs-mode t
           smart-tabs-mode t)))
 
-(define-minor-mode linux-style-i-mode ()
+(define-minor-mode linux-style-mode ()
   "Sets the default `cc-mode' style to linux, and enables
 `c-lineup-arglist-tabs-only'."
   :init-value nil
-  :global nil
   :lighter " Linux"
-  :version "29.2"
-  (if (not linux-style-i-mode)
+  (if (not linux-style-mode)
       (custom-reevaluate-setting 'c-default-style)
     (progn
       (setq c-default-style "linux")
@@ -108,33 +106,11 @@
 ;; Utiltity.
 ;;-------------
 
-(defun add-hook-i (hook-list function)
+(defun add-hook-list (hook-list function)
   "Apply a function to one or more hooks."
   (mapc (lambda (hook)
           (add-hook hook function))
         hook-list))
-
-
-;;============================================
-;; Package management.
-;;============================================
-
-(require 'package)
-(setq package-native-compile t)
-(add-to-list 'package-archives '("gnu"    . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
-(add-to-list 'package-archives '("melpa"  . "https://melpa.org/packages/"))
-(package-initialize)
-
-(require 'use-package)
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(eval-and-compile
-  (setq use-package-always-ensure t
-        use-package-expand-minimally t
-        use-package-verbose t
-        native-comp-async-report-warnings-errors nil))
 
 
 ;;============================================
@@ -151,12 +127,11 @@
               set-fill-column 80
               display-fill-column-indicator-column 80
               column-number-mode t
+              show-trailing-whitespace t
               next-line-add-newlines t
               history-length 1000
               use-dialog-box nil
               delete-by-moving-to-trash t
-              create-lockfiles nil
-              auto-save-default nil
               show-paren-context-when-offscreen 'overlay)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -167,27 +142,24 @@
 (set-language-environment "UTF-8")
 
 ;; Whitespace.
-(add-hook-i '(prog-mode-hook) #'display-line-numbers-mode)
-(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            #'auto-fill-mode)
-(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
+(add-hook-list '(prog-mode-hook) #'display-line-numbers-mode)
+(add-hook-list '(prog-mode-hook text-mode-hook org-mode-hook) #'auto-fill-mode)
+(add-hook-list '(prog-mode-hook text-mode-hook org-mode-hook)
             #'display-fill-column-indicator-mode)
-(add-hook-i '(prog-mode-hook text-mode-hook org-mode-hook)
-            #'(lambda () (setq show-trailing-whitespace t)))
 
 ;; Style.
-(add-hook-i '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook
+(add-hook-list '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook
                           asm-mode-hook nasm-mode-hook shell-script-mode-hook
                           makefile-mode-hook)
-            #'smart-tabs-style-i-mode)
-(add-hook-i '(c-mode-hook c++-mode-hook)
-            #'linux-style-i-mode)
-(add-hook-i '(java-mode-hook) ;; Technically Rust uses this style too...
+            #'stabs-mode)
+(add-hook-list '(c-mode-hook c++-mode-hook)
+            #'linux-style-mode)
+(add-hook-list '(java-mode-hook) ;; Technically Rust uses this style too...
             #'(lambda ()
                 (progn
                   (setq set-fill-column 100
                         display-fill-column-indicator-column 100)
-                  (change-tab-width-i 4))))
+                  (customize-tab-width 4))))
 
 ;;-------------
 ;; Desktop environment.
@@ -253,13 +225,20 @@
   (eglot-stay-out-of '(yasnippet)))
 
 ;; Git manager.
-(use-package magit)
+;;(use-package magit)
 
 ;;-------------
 ;; Theming.
 ;;-------------
 
-(set-frame-font "Termsyn 11" nil t)
+(setq-default visible-bell t
+              default-frame-alist '((font . "Termsyn-11")))
+
+(set-fringe-mode  5)
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
 
 (use-package ewal
   :init (setq ewal-use-built-in-always-p nil
