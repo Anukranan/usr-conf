@@ -1,18 +1,17 @@
-#-----------#
-# Anukranan #
-# shell rc  #
-#-----------#
+#------#
+# shrc #
+#------#
 
 [[ $- != *i* ]] && return
 
-#----------------------------------------#
+#--------------#
 # Aliases.
-#----------------------------------------#
+#--------------#
 
 alias ls='ls -ADH1 --color=auto --group-directories-first'
 alias grep='grep --color=auto'
 
-alias cdp='cd $HOME/var/src'
+alias cdp='cd $HOME/src'
 
 # XBPS.
 alias xq='xbps-query'
@@ -26,9 +25,9 @@ alias xr='doas xbps-remove'
 alias xrr='doas xbps-remove -Ro'
 
 
-#----------------------------------------#
+#--------------#
 # Environment.
-#----------------------------------------#
+#--------------#
 
 export EDITOR=mg
 
@@ -50,17 +49,17 @@ export SDL_VIDEODRIVER=wayland
 export _JAVA_AWT_WM_NONREPARENTING=1
 
 
-#----------------------------------------#
+#--------------#
 # Theming.
-#----------------------------------------#
+#--------------#
 
 (cat $HOME/.cache/wal/sequences &)
 . $HOME/.cache/wal/colors-tty.sh
 
 
-#----------------------------------------#
+#--------------#
 # System.
-#----------------------------------------#
+#--------------#
 
 export HISTFILE=$HOME/.cache/sh_history
 export PATH=$PATH:$HOME/.local/bin:$HOME/.local/bin/manual/jdtls/bin

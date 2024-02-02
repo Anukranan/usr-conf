@@ -1,0 +1,8 @@
+#------#
+# lfrc #
+#------#
+
+drawbox = true
+hidden = true
+dirpreviews = true
+history = false

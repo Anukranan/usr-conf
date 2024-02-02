@@ -1,6 +1,5 @@
 #-------------#
-# Anukranan   #
-# Sway config #
+# sway config #
 #-------------#
 
 include "$HOME/.cache/wal/colors-sway"
