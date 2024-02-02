@@ -7,21 +7,17 @@
 ;; Initialization.
 ;;============================================
 
-(setq gc-cons-threshold (* 2 1000 1000)
-      gc-cons-percentage 0.1
-      read-process-output-max (* 1024 1024))
-
 (setq-default user-emacs-directory "~/.config/emacs"
               user-init-file (expand-file-name "init.el" user-emacs-directory)
               custom-file (expand-file-name "custom.el" user-emacs-directory)
-              backup-directory-alist `(("." . "~/.cache/emacs/saves"))
+              backup-directory-alist '(("." . "~/.cache/emacs/saves"))
               auto-save-list-file-prefix "~/.cache/emacs/saves/autosaves-"
               ido-save-directory-list-file "~/.cache/emacs/saves/ido_history")
 
 (setq-default backup-by-copying t
-              initial-major-mode 'emacs-lisp-mode
-              initial-scratch-message nil
-              inhibit-startup-message t)
+              initial-major-mode 'emacs-lisp-mode)
+
+(desktop-save-mode 1)
 
 
 ;;============================================
@@ -127,6 +123,7 @@
               set-fill-column 80
               display-fill-column-indicator-column 80
               column-number-mode t
+              auto-fill-function 'do-auto-fill
               show-trailing-whitespace t
               next-line-add-newlines t
               history-length 1000
@@ -135,31 +132,26 @@
               show-paren-context-when-offscreen 'overlay)
 
 (fset 'yes-or-no-p 'y-or-n-p)
-(show-paren-mode 1)
-(global-hl-line-mode)
 
 (prefer-coding-system 'utf-8-unix)
 (set-language-environment "UTF-8")
 
-;; Whitespace.
-(add-hook-list '(prog-mode-hook) #'display-line-numbers-mode)
-(add-hook-list '(prog-mode-hook text-mode-hook org-mode-hook) #'auto-fill-mode)
 (add-hook-list '(prog-mode-hook text-mode-hook org-mode-hook)
-            #'display-fill-column-indicator-mode)
+               #'display-line-numbers-mode)
+(add-hook-list '(prog-mode-hook text-mode-hook org-mode-hook)
+               #'display-fill-column-indicator-mode)
 
-;; Style.
-(add-hook-list '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook
-                          asm-mode-hook nasm-mode-hook shell-script-mode-hook
-                          makefile-mode-hook)
-            #'stabs-mode)
+(add-hook-list '(prog-mode-hook)
+               #'(lambda ()
+                   (unless (derived-mode-p
+                            'emacs-lisp-mode 'lisp-mode 'scheme-mode)
+                     (stabs-mode 1))))
 (add-hook-list '(c-mode-hook c++-mode-hook)
-            #'linux-style-mode)
+               #'linux-style-mode)
 (add-hook-list '(java-mode-hook) ;; Technically Rust uses this style too...
-            #'(lambda ()
-                (progn
-                  (setq set-fill-column 100
-                        display-fill-column-indicator-column 100)
-                  (customize-tab-width 4))))
+               #'(lambda ()
+                   (setq set-fill-column 100
+                         display-fill-column-indicator-column 100)))
 
 ;;-------------
 ;; Desktop environment.
@@ -171,39 +163,45 @@
   :commands (dired)
   :hook ((dired-mode . hl-line-mode)
          (dired-mode . dired-hide-details-mode))
-  :init
-  (setq dired-mouse-drag-files t
-        dired-bind-jump nil)
+  :init (setq dired-mouse-drag-files t
+              dired-bind-jump nil)
   :bind (:map dired-mode-map ("-" . dired-up-directory))
-  :config
-  (require 'dired-x)
-  (setq dired-kill-when-opening-new-dired-buffer t
-        dired-listing-switches "-AghoD --group-directories-first"))
+  :config (setq dired-kill-when-opening-new-dired-buffer t
+                dired-listing-switches "-ADHXro --group-directories-first"))
 
 ;; System process manager.
-(use-package proced)
+(use-package proced
+  :ensure nil)
 
 ;; Torrent manager.
-(use-package transmission)
+(use-package transmission
+  :ensure t)
 
 ;; Emacs window manager.
-(use-package popper)
+(use-package popper
+  :ensure t)
 
 ;; Window manager integration.
-(use-package sway)
-
-;; Package manager integration.
-(use-package system-packages)
+(use-package sway
+  :ensure t)
 
 ;;-------------
 ;; Development environment.
 ;;-------------
 
 ;; Completion system.
-(use-package ido
+(use-package ido-at-point
   :ensure t
+  :init (ido-at-point-mode t))
+(use-package ido-completing-read+
+  :ensure t
+  :init (ido-ubiquitous-mode t)
+  :custom (setq magit-completing-read-function 'magit-ido-completing-read
+                gnus-completing-read-function 'gnus-ido-completing-read
+                ess-use-ido t))
+(use-package ido
+  :ensure nil
   :init (ido-mode t)
-  :hook (((ido-mode) . ido-everywhere))
   :custom (setq ido-everywhere t
                 ido-enable-flex-matching t
                 ido-use-filename-at-point 'guess
@@ -211,40 +209,56 @@
 
 ;; LSP manager.
 (use-package eglot
-  :ensure t
-  :hook (((c-mode c++-mode rust-mode ess-r-mode java-mode)
-          . eglot-ensure))
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-events-buffer-size 0)
-  (eglot-extend-to-xref nil)
-  (eglot-ignored-server-capabilities
-   '(:documentFormattingProvider
-     :documentRangeFormattingProvider
-     :documentOnTypeFormattingProvider))
-  (eglot-stay-out-of '(yasnippet)))
+  :ensure nil
+  :hook (((c-mode c++-mode rust-mode ess-r-mode java-mode) . eglot-ensure))
+  :custom (progn
+            (eglot-autoshutdown t)
+            (eglot-events-buffer-size 0)
+            (eglot-extend-to-xref nil)
+            (eglot-ignored-server-capabilities
+             '(:documentFormattingProvider
+               :documentRangeFormattingProvider
+               :documentOnTypeFormattingProvider))
+            (eglot-stay-out-of '(yasnippet))))
 
 ;; Git manager.
-;;(use-package magit)
+(use-package magit
+  :ensure t)
+
+;; Dissassemble C, C++, and Fortran.
+(use-package disaster
+  :ensure t
+  :commands (disaster)
+  :bind (:map c-mode-map ("C-c d" . disaster)))
+
 
 ;;-------------
 ;; Theming.
 ;;-------------
 
+;; This stuff should be outside of ewal so that I can use other themes
+;; with these settings.
 (setq-default visible-bell t
+              inhibit-startup-message t
+              initial-scratch-message nil
               default-frame-alist '((font . "Termsyn-11")))
 
-(set-fringe-mode  5)
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
+(set-fringe-mode  0)
+
+(scroll-bar-mode     -1)
+(tool-bar-mode       -1)
+(tooltip-mode        -1)
+(menu-bar-mode       -1)
+(global-hl-line-mode -1)
+(show-paren-mode      1)
 
 (use-package ewal
+  :ensure t
   :init (setq ewal-use-built-in-always-p nil
               ewal-use-built-in-on-failure-p t))
 (use-package ewal-spacemacs-themes
-  :init (setq spacemacs-theme-underline-parens t)
-  :config (progn
-            (load-theme 'ewal-spacemacs-classic t)
-            (enable-theme 'ewal-spacemacs-classic)))
+  :ensure t
+  :init (progn
+          (load-theme 'ewal-spacemacs-classic t)
+          (enable-theme 'ewal-spacemacs-classic))
+  :custom (setq spacemacs-theme-underline-parens t))

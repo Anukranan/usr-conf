@@ -8,11 +8,7 @@
 #--------------------
 
 ERROR_MSG=$'Error: invalid input\n'
-HELP_MSG=$'Usage: theme-gen.sh [options] [wallpaper/theme] \n    \
-           \t options: \n                                        \
-           \t\t arg 1: dark, light \n                            \
-           \t\t arg 2: wallpaper file or built-in pywal theme \n'
-
+HELP_MSG=$'Usage: theme-gen.sh [options] [wallpaper/theme]'
 
 THEME_COLOR=$1
 THEME_FILE=$2

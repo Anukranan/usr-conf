@@ -9,7 +9,7 @@
 # Aliases.
 #----------------------------------------#
 
-alias ls='ls -A1H --color=auto --group-directories-first --tabsize=2'
+alias ls='ls -ADH1 --color=auto --group-directories-first'
 alias grep='grep --color=auto'
 
 alias cdp='cd $HOME/var/src'

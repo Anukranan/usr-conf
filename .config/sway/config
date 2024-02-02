@@ -5,7 +5,6 @@
 
 include "$HOME/.cache/wal/colors-sway"
 
-
 #-------------------------------
 # Variables.
 #-------------------------------
@@ -42,7 +41,7 @@ include "$HOME/.cache/wal/colors-sway"
   set $ws10 10
 
   # Theming.
-  set $bg $HOME/var/media/img/wal/w4.png
+  set $bg $HOME/media/img/wal/w4.png
 
   set $inner-gaps 4
   set $font terminus
@@ -68,7 +67,7 @@ include "$HOME/.cache/wal/colors-sway"
   set $polkitagentd /usr/libexec/polkit-gnome-authentication-agent-1
 
   # Menus.
-  set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 2 --bdr=$c3 -W 0.5 \
+  set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 --bdr=$c3 -W 0.5 \
                  --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3      \
                  --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf    \
                  --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
@@ -78,7 +77,7 @@ include "$HOME/.cache/wal/colors-sway"
   set $menu-run  $menu | xargs swaymsg exec --
 
   # Screenshots.
-  set $scrshot-file $HOME/var/media/img/scr/$(date +'%s.png')
+  set $scrshot-file $HOME/media/img/scr/$(date +'%s.png')
   set $scrshot-scr grimshot --notify save screen - > $scrshot-file
   set $scrshot-sel grimshot --notify save area   - > $scrshot-file
 
@@ -114,8 +113,10 @@ include "$HOME/.cache/wal/colors-sway"
     [window_type="dialog"]      floating enable
     [window_type="menu"]        floating enable
 
+    # Applications.
     [app_id="mpv"]              floating enable
     [app_id="imv"]              floating enable
+    [app_id="prismlauncher"]    floating enable
   }
 
 # Wallpaper.
@@ -123,11 +124,11 @@ include "$HOME/.cache/wal/colors-sway"
   output * bg $bg fill
 
 # Borders.
-  smart_borders on
-  hide_edge_borders smart
-  titlebar_padding 10 2
-  default_border pixel 2
-  default_floating_border normal
+  smart_borders no_gaps
+  hide_edge_borders smart_no_gaps
+  default_border pixel 1
+  default_floating_border pixel 1
+  titlebar_padding 6 1
 
 # Other.
   gaps inner $inner-gaps
@@ -155,18 +156,16 @@ exec {
   pipewire
   udiskie
 
-  fnott
-  autotiling
   $clipd
   $idle
+  fnott
 
   emacs --daemon
-  emacsclient -c
 }
 
 # Settings.
 exec {
-  $HOME/.config/sway/scripts/theme-gen.sh $theme-color $theme-file
+  theme-gen.sh $theme-color $theme-file
 
   gsettings set org.gnome.desktop.interface font-name "$font $font-size"
   gsettings set org.gnome.desktop.interface gtk-theme "$gtk-theme"

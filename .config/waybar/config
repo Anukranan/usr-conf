@@ -1,17 +1,17 @@
-//--------------//
-// Anukranan     |
-// Waybar config |
-//--------------//
+/*---------------*
+ * Anukranan     *
+ * Waybar config *
+ *---------------*/
 
 {
-    //------------------------------//
-    // Layout.
-    //------------------------------//
+    /*
+     * Layout.
+     */
 
     "layer": "top",
     "position": "top",
-    "height": 20,
-    "spacing": 4,
+    "width":  1912,
+    "spacing": 3,
 
     "modules-left": [
         "sway/workspaces",
@@ -21,7 +21,7 @@
         "sway/window"
     ],
     "modules-right": [
-        //"mpd",
+        /*"mpd",*/
         "wireplumber",
         "battery",
         "network",
@@ -30,9 +30,9 @@
     ],
 
 
-    //------------------------------//
-    // Modules.
-    //------------------------------//
+    /*
+     * Modules.
+     */
 
     "sway/workspaces": {
          "disable-scroll": true,
@@ -43,14 +43,15 @@
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-    //"mpd": {
-    //    "format": "{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%",
-    //    "format-disconnected": "MPD x",
-    //    "unknown-tag": "MPD N/A",
-    //    "interval": 2,
-    //    "tooltip-format": "MPD (connected)",
-    //    "tooltip-format-disconnected": "MPD (disconnected)"
-    //},
+
+    /*"mpd": {
+        "format": "{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%",
+        "format-disconnected": "MPD x",
+        "unknown-tag": "MPD N/A",
+        "interval": 2,
+        "tooltip-format": "MPD (connected)",
+        "tooltip-format-disconnected": "MPD (disconnected)"
+    },*/
     "wireplumber": {
         "format": "{volume}% ",
         "format-bluetooth": "B {volume}%",
@@ -59,6 +60,7 @@
         "format-source": "{volume}%",
         "format-source-muted": "M",
     },
+
     "battery": {
         "bat": "BAT0",
         "interval": 60,
@@ -69,9 +71,11 @@
         "format": "{capacity}%",
         "max-length": 25
     },
+
     "tray": {
         "spacing": 1
     },
+
     "network": {
         "format-wifi": "{essid} ({signalStrength}%)",
         "format-ethernet": "{ipaddr}/{cidr}",
@@ -79,6 +83,7 @@
         "format-linked": "{ifname} (No IP)",
         "format-disconnected": "x",
     },
+
     "clock": {
         "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%d %m %Y}"
