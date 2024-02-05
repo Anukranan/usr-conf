@@ -47,7 +47,7 @@ include "$HOME/.cache/wal/colors-sway"
   set $font-size 10
 
   set $theme-file $wallpaper
-  Set $theme-color dark
+  Set $theme-color light
 
   set $gtk-theme FlatColor
   set $icon-theme FlattrColor
