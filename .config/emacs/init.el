@@ -6,17 +6,46 @@
 ;; Initialization.
 ;;============================================
 
-(setq-default user-emacs-directory "~/.config/emacs"
-              user-init-file (expand-file-name "init.el" user-emacs-directory)
-              custom-file (expand-file-name "custom.el" user-emacs-directory)
-              backup-directory-alist '(("." . "~/.cache/emacs/saves"))
-              auto-save-list-file-prefix "~/.cache/emacs/saves/autosaves-"
-              ido-save-directory-list-file "~/.cache/emacs/saves/ido_history")
+;; Temporary fix for this foolish issue.
+(progn
+  (setenv "XDG_CACHE_HOME" (concat (getenv "HOME") "/.cache"))
+  (setq-default backup-directory-alist '(("." . "~/.cache/emacs"))))
 
-(setq-default backup-by-copying t
-              initial-major-mode 'emacs-lisp-mode)
+(setq-default
+ user-emacs-directory (expand-file-name "emacs" (getenv "XDG_CONFIG_HOME"))
+ user-init-file       (expand-file-name "init.el" user-emacs-directory)
+ custom-file          (expand-file-name "custom.el" user-emacs-directory)
 
-(desktop-save-mode 1)
+ backup-dir (concat (getenv "XDG_CACHE_HOME") "/emacs")
+;; backup-directory-alist       '(("." . (expand-file-name backup-dir)))
+ auto-save-list-file-prefix   (expand-file-name "autosave-"   backup-dir)
+ ido-save-directory-list-file (expand-file-name "ido_history" backup-dir)
+ desktop-dirname              user-emacs-directory
+ desktop-path                 desktop-dirname
+ desktop-base-file-name       "emacs.desktop"
+ desktop-base-lock-name       (concat desktop-base-file-name ".lock")
+
+ desktop-save                 t
+ desktop-load-locked-desktop  nil
+ desktop-auto-save-timeout    30
+
+ backup-by-copying            t
+
+ initial-major-mode           'emacs-lisp-mode
+ initial-scratch-message      nil
+ inhibit-startup-message      t
+ default-frame-alist          '((font . "Termsyn-11"))
+ visible-bell                 nil)
+
+(scroll-bar-mode     -1)
+(tool-bar-mode       -1)
+(tooltip-mode        -1)
+(menu-bar-mode       -1)
+
+(global-hl-line-mode -1)
+(show-paren-mode      1)
+
+(desktop-save-mode    1)
 
 
 ;;============================================
@@ -24,7 +53,8 @@
 ;;============================================
 
 (require 'package)
-(setq-default package-native-compile t
+(setq-default package-install-upgrade-built-in t
+              package-native-compile t
               native-comp-async-report-warnings-errors nil)
 (add-to-list 'package-archives '("gnu"    . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
@@ -69,17 +99,6 @@
 ;; Minor modes.
 ;;-------------
 
-(define-minor-mode stabs-mode ()
-  "Enables `indent-tabs-mode' and `smart-tabs-mode' locally in a buffer."
-  :init-value nil
-  :lighter " Stabs"
-  :require 'smart-tabs-mode
-  (if (not stabs-mode)
-      (setq indent-tabs-mode nil
-            smart-tabs-mode nil)
-    (setq indent-tabs-mode t
-          smart-tabs-mode t)))
-
 (define-minor-mode linux-style-mode ()
   "Sets the default `cc-mode' style to linux, and enables
 `c-lineup-arglist-tabs-only'."
@@ -96,6 +115,20 @@
                    c-lineup-gcc-asm-reg
                    c-lineup-arglist-tabs-only))))
       (c-set-style "linux-tabs-only"))))
+
+(define-minor-mode stabs-mode ()
+  "Enables `indent-tabs-mode', `smart-tabs-mode', and `linux-style-mode' locally
+in a buffer."
+  :init-value nil
+  :lighter " Stabs"
+  :require 'smart-tabs-mode
+  (if (not stabs-mode)
+      (setq indent-tabs-mode nil
+            smart-tabs-mode nil
+            linux-style-mode nil)
+    (setq indent-tabs-mode t
+          smart-tabs-mode t
+          linux-style-mode t)))
 
 ;;-------------
 ;; Utiltity.
@@ -119,12 +152,15 @@
 (setq-default tab-width 8
               indent-tabs-mode nil
               backward-delete-char-untabify-method 'hungry
+
+              fill-column 80
               set-fill-column 80
               display-fill-column-indicator-column 80
               column-number-mode t
               auto-fill-function 'do-auto-fill
               show-trailing-whitespace t
               next-line-add-newlines t
+
               history-length 1000
               use-dialog-box nil
               delete-by-moving-to-trash t
@@ -147,10 +183,6 @@
                      (stabs-mode 1))))
 (add-hook-list '(c-mode-hook c++-mode-hook)
                #'linux-style-mode)
-(add-hook-list '(java-mode-hook) ;; Technically Rust uses this style too...
-               #'(lambda ()
-                   (setq set-fill-column 100
-                         display-fill-column-indicator-column 100)))
 
 ;;-------------
 ;; Desktop environment.
@@ -235,21 +267,7 @@
 ;; Theming.
 ;;-------------
 
-;; This stuff should be outside of ewal so that I can use other themes
-;; with these settings.
-(setq-default visible-bell t
-              inhibit-startup-message t
-              initial-scratch-message nil
-              default-frame-alist '((font . "Termsyn-11")))
-
 (set-fringe-mode  0)
-
-(scroll-bar-mode     -1)
-(tool-bar-mode       -1)
-(tooltip-mode        -1)
-(menu-bar-mode       -1)
-(global-hl-line-mode -1)
-(show-paren-mode      1)
 
 (use-package ewal
   :ensure t

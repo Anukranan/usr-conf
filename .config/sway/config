@@ -60,7 +60,7 @@ include "$HOME/.cache/wal/colors-sway"
   # Clipboard.
   set $clip-hist $HOME/.cache/clipboard_history.json
   set $clipd wl-paste --watch clipman store --histpath=$clip-hist \
-                      --notify --max-items=50 --unix
+                      --notify --max-items=500 --unix
 
   # Polkit.
   set $polkitagentd /usr/libexec/polkit-gnome-authentication-agent-1

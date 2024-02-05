@@ -2,9 +2,9 @@
 # sh profile #
 #------------#
 
-#--------------#
+#---------------
 # System.
-#--------------#
+#---------------
 
 # Directories.
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -27,5 +27,5 @@ export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
 export W3M_DIR="$XDG_STATE_HOME/w3m"
 
-export ENV="$HOME/.config/sh/shrc"
+export ENV="$XDG_CONFIG_HOME/sh/shrc"
 . $ENV
