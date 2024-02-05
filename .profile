@@ -14,7 +14,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 
 export XDG_DOCUMENTS_DIR="$HOME/doc"
 export XDG_DOWNLOAD_DIR="$HOME/tmp"
-export XDG_MUSIC_DIR="$HOME/media/aud/music"
+export XDG_MUSIC_DIR="$HOME/media/aud/mus"
 export XDG_PICTURES_DIR="$HOME/media/img"
 export XDG_SCREENSHOTS_DIR="$HOME/media/img/scr"
 export XDG_VIDEOS_DIR="$HOME/media/vid"
