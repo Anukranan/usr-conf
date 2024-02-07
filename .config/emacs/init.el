@@ -9,15 +9,15 @@
 ;; Temporary fix for this foolish issue.
 (progn
   (setenv "XDG_CACHE_HOME" (concat (getenv "HOME") "/.cache"))
-  (setq-default backup-directory-alist '(("." . "~/.cache/emacs"))))
+  (setq-default backup-directory-alist '(("." . "~/.cache/emacs/"))))
 
 (setq-default
  user-emacs-directory (expand-file-name "emacs" (getenv "XDG_CONFIG_HOME"))
  user-init-file       (expand-file-name "init.el" user-emacs-directory)
  custom-file          (expand-file-name "custom.el" user-emacs-directory)
 
- backup-dir (concat (getenv "XDG_CACHE_HOME") "/emacs")
-;; backup-directory-alist       '(("." . (expand-file-name backup-dir)))
+ backup-dir             (concat (getenv "XDG_CACHE_HOME") "/emacs")
+ backup-directory-alist '(("." . (concat (expand-file-name backup-dir) "/")))
  auto-save-list-file-prefix   (expand-file-name "autosave-"   backup-dir)
  ido-save-directory-list-file (expand-file-name "ido_history" backup-dir)
  desktop-dirname              user-emacs-directory
@@ -181,7 +181,12 @@ in a buffer."
                    (unless (derived-mode-p
                             'emacs-lisp-mode 'lisp-mode 'scheme-mode)
                      (stabs-mode 1))))
-(add-hook-list '(c-mode-hook c++-mode-hook)
+(add-hook-list '(java-mode-hook)
+               #'(lambda ()
+                   (setq fill-column 100
+                         set-fill-column 100
+                         display-fill-column-indicator-column 100)))
+(add-hook-list '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook)
                #'linux-style-mode)
 
 ;;-------------

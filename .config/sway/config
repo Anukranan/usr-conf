@@ -4,291 +4,289 @@
 
 include "$HOME/.cache/wal/colors-sway"
 
-#-------------------------------
+#---------------
 # Variables.
-#-------------------------------
+#---------------
 
 # Basic.
-  # Aliases.
-  set $mod   Mod4
-  set $left  Left
-  set $down  Down
-  set $up    Up
-  set $right Right
+	# Aliases.
+	set $mod   Mod4
+	set $left  Left
+	set $down  Down
+	set $up    Up
+	set $right Right
 
-  # Colors.
-  set $cf $foreground
-  set $cb $background
-  set $c1 $color1
-  set $c2 $color2
-  set $c3 $color3
-  set $c4 $color4
-  set $c5 $color5
-  set $c6 $color6
-  set $c7 $color7
+	# Colors.
+	set $cf $foreground
+	set $cb $background
+	set $c1 $color1
+	set $c2 $color2
+	set $c3 $color3
+	set $c4 $color4
+	set $c5 $color5
+	set $c6 $color6
+	set $c7 $color7
 
-  # Workspace names.
-  set $ws1 1
-  set $ws2 2
-  set $ws3 3
-  set $ws4 4
-  set $ws5 5
-  set $ws6 6
-  set $ws7 7
-  set $ws8 8
-  set $ws9 9
-  set $ws10 10
+	# Workspace names.
+	set $ws1 1
+	set $ws2 2
+	set $ws3 3
+	set $ws4 4
+	set $ws5 5
+	set $ws6 6
+	set $ws7 7
+	set $ws8 8
+	set $ws9 9
+	set $ws10 10
 
-  # Theming.
-  set $bg $HOME/media/img/wal/w4.png
+	# Theming.
+	set $bg $HOME/media/img/wal/w4.png
 
-  set $inner-gaps 4
-  set $font terminus
-  set $font-size 10
+	set $inner-gaps 4
+	set $font terminus
+	set $font-size 10
 
-  set $theme-file $wallpaper
-  Set $theme-color light
+	set $theme-file $wallpaper
+	set $theme-color dark
 
-  set $gtk-theme FlatColor
-  set $icon-theme FlattrColor
-  set $gtk-key-theme Emacs
+	set $gtk-theme FlatColor
+	set $icon-theme FlattrColor
+	set $gtk-key-theme Emacs
 
 # Applications and commands. (TODO: Make this better).
-  # Terminal.
-  set $term foot -L
+	# Terminal.
+	set $term foot -L
 
-  # Clipboard.
-  set $clip-hist $HOME/.cache/clipboard_history.json
-  set $clipd wl-paste --watch clipman store --histpath=$clip-hist \
-                      --notify --max-items=500 --unix
+	# Clipboard.
+	set $clip-hist $HOME/.cache/clipboard_history.json
+	set $clipd wl-paste --watch clipman store --histpath=$clip-hist \
+	                    --notify --max-items=500 --unix
 
-  # Polkit.
-  set $polkitagentd /usr/libexec/polkit-gnome-authentication-agent-1
+	# Polkit.
+	set $polkitagentd /usr/libexec/polkit-mate-authentication-agent-1
 
-  # Menus.
-  set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 --bdr=$c3 -W 0.5 \
-                 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 --cf=$c3      \
-                 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb --fbf=$cf    \
-                 --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb --scf=$c3
-  set $menu      bemenu-run $menu-opts --fn=$font -p '[run]'
-  set $menu-clip clipman pick -t bemenu -T="$menu-opts --fn=$font -p '[pick]'" \
-                 --histpath=$clip-hist
-  set $menu-run  $menu | xargs swaymsg exec --
+	# Menus.
+	set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 --bdr=$c3 \
+	               -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 \
+	               --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb \
+                       --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb \
+                       --scf=$c3
+	set $menu      bemenu-run $menu-opts --fn=$font -p '[run]'
+	set $menu-clip clipman pick -t bemenu -T="$menu-opts --fn=$font \
+                                    -p '[pick]'" --histpath=$clip-hist
+	set $menu-run  $menu | xargs swaymsg exec --
 
-  # Screenshots.
-  set $scrshot-file $HOME/media/img/scr/$(date +'%s.png')
-  set $scrshot-scr grimshot --notify save screen - > $scrshot-file
-  set $scrshot-sel grimshot --notify save area   - > $scrshot-file
+	# Screenshots.
+	set $scrshot-file $HOME/media/img/scr/$(date +'%s.png')
+	set $scrshot-scr grimshot --notify save screen - > $scrshot-file
+	set $scrshot-sel grimshot --notify save area   - > $scrshot-file
 
-  # Lock.
-  set $lock swaylock -f -e -u -L -i $bg -s fill
-  set $idle swayidle -w                                \
-            timeout 900 '$lock'                        \
-            timeout 1200 'swaymsg "output * dpms off"' \
-              resume 'swaymsg "output * dpms on"'      \
-              before-sleep '$lock'
+	# Lock.
+	set $lock swaylock -f -e -u -L -i $bg -s fill
+	set $idle swayidle -w \
+	          timeout 900 '$lock' \
+	          timeout 1200 'swaymsg "output * dpms off"' \
+	                resume 'swaymsg "output * dpms on"' \
+	                before-sleep '$lock'
 
-# Screens.
-  set $scr1 HDMI-A-2
-  set $scr1_res 1920x1080@143.994Hz
-  set $scr1_pos 0,0
+	# Screens.
+	set $scr1 HDMI-A-2
+	set $scr1_res 1920x1080@143.994Hz
+	set $scr1_pos 0,0
 
-
-#-------------------------------
+#---------------
 # Theming.
-#-------------------------------
+#---------------
 
 # Windows.
-  for_window {
-    [shell="xwayland"] title_format "%title [Xwayland]"
+for_window {
+	[shell="xwayland"] title_format "%title [Xwayland]"
 
-    [window_role="dialog"]      floating enable
-    [window_role="pop-up"]      floating enable
-    [window_role="bubble"]      floating enable
-    [window_role="task_dialog"] floating enable
-    [window_role="Preferences"] floating enable
-    [window_role="About"]       floating enable
+	[window_role="dialog"]      floating enable
+	[window_role="pop-up"]      floating enable
+	[window_role="bubble"]      floating enable
+	[window_role="task_dialog"] floating enable
+	[window_role="Preferences"] floating enable
+	[window_role="About"]       floating enable
 
-    [window_type="dialog"]      floating enable
-    [window_type="menu"]        floating enable
+	[window_type="dialog"]      floating enable
+	[window_type="menu"]        floating enable
 
-    # Applications.
-    [app_id="mpv"]              floating enable
-    [app_id="imv"]              floating enable
-    [app_id="prismlauncher"]    floating enable
-  }
-
-# Wallpaper.
-  output $scr1 resolution $scr1_res position $scr1_pos
-  output * bg $bg fill
+	# Applications.
+	[app_id="mpv"]              floating enable
+	[app_id="imv"]              floating enable
+	[app_id="zatuhra"]          floating enable
+	[app_id="prismlauncher"]    floating enable
+}
+popup_during_fullscreen ignore
 
 # Borders.
-  smart_borders no_gaps
-  hide_edge_borders smart_no_gaps
-  default_border pixel 1
-  default_floating_border pixel 1
-  titlebar_padding 6 1
+smart_borders           no_gaps
+hide_edge_borders       smart_no_gaps
+default_border          pixel 1
+default_floating_border pixel 1
+titlebar_padding        6 1
+
+# Screen.
+output $scr1 resolution $scr1_res position $scr1_pos
 
 # Other.
-  gaps inner $inner-gaps
-  font $font $font-size
-  popup_during_fullscreen ignore
+output * bg $bg fill
+gaps inner $inner-gaps
+font $font $font-size
 
 # Colors.
 # client.class          <border> <background>  <text> <indicator> <child_border>
-  client.focused            $c6        $cb        $c7        $c1        $c6
-  client.focused_inactive   $c1        $cb        $c7        $c1        $c1
-  client.unfocused          $c1        $cb        $c7        $cb        $c1
-  #client.urgent
-  #client.placeholder
+client.focused            $c6        $cb        $c7        $c1        $c6
+client.focused_inactive   $c1        $cb        $c7        $c1        $c1
+client.unfocused          $c1        $cb        $c7        $cb        $c1
+#client.urgent
+#client.placeholder
 
-  client.background $cb
+client.background $cb
 
-
-#-------------------------------
+#---------------
 # Autostart.
-#-------------------------------
+#---------------
 
 # Daemons.
 exec {
-  $polkitagentd &
-  pipewire
-  udiskie
+	$polkitagentd &
+	pipewire
+	udiskie
 
-  $clipd
-  $idle
-  fnott
-
-  emacs --daemon
+	$clipd
+	$idle
+	fnott
+	autotiling
 }
 
 # Settings.
 exec {
-  theme-gen.sh $theme-color $theme-file
+	theme-gen.sh $theme-color $theme-file
 
-  gsettings set org.gnome.desktop.interface font-name "$font $font-size"
-  gsettings set org.gnome.desktop.interface gtk-theme "$gtk-theme"
-  gsettings set org.gnome.desktop.interface icon-theme "$icon-theme"
-  gsettings set org.gnome.desktop.interface gtk-key-theme "$gtk-key-theme"
+	gsettings set org.gnome.desktop.interface font-name "$font $font-size"
+	gsettings set org.gnome.desktop.interface gtk-theme "$gtk-theme"
+	gsettings set org.gnome.desktop.interface icon-theme "$icon-theme"
+	gsettings set org.gnome.desktop.interface gtk-key-theme "$gtk-key-theme"
 
-  gsettings set org.gtk.Settings.FileChooser show-hidden true
-  gsettings set org.gtk.Settings.FileChooser sort-column name
-  gsettings set org.gtk.Settings.FileChooser sort-directories-first true
-  gsettings set org.gtk.Settings.FileChooser sort-order ascending
-  gsettings set org.gtk.Settings.FileChooser type-format category
+	gsettings set org.gtk.Settings.FileChooser show-hidden true
+	gsettings set org.gtk.Settings.FileChooser sort-column name
+	gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+	gsettings set org.gtk.Settings.FileChooser sort-order ascending
+	gsettings set org.gtk.Settings.FileChooser type-format category
 }
 
-
-#-------------------------------
+#---------------
 # Key bindings.
-#-------------------------------
+#---------------
 
 # Basic.
-  bindsym $mod+Shift+q kill
-  bindsym $mod+Shift+c reload
-  bindsym $mod+Shift+l exec $lock
-  bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit?' -B 'Yes.' 'swaymsg exit'
+bindsym $mod+Shift+q kill
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+l exec $lock
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit?' -B 'Yes.' 'swaymsg exit'
 
 # Applications.
-  bindsym $mod+Return exec $term
+bindsym $mod+Return exec $term
 
-  bindsym $mod+c exec $menu-clip
-  bindsym $mod+d exec $menu-run
+bindsym $mod+c exec $menu-clip
+bindsym $mod+d exec $menu-run
 
-  bindsym $mod+Print exec       $scrshot-scr
-  bindsym $mod+Shift+Print exec $scrshot-sel
+bindsym $mod+Print exec       $scrshot-scr
+bindsym $mod+Shift+Print exec $scrshot-sel
 
 # Movement.
-  bindsym $mod+$left  focus left
-  bindsym $mod+$down  focus down
-  bindsym $mod+$up    focus up
-  bindsym $mod+$right focus right
+bindsym $mod+$left  focus left
+bindsym $mod+$down  focus down
+bindsym $mod+$up    focus up
+bindsym $mod+$right focus right
 
-  bindsym $mod+Shift+$left  move left
-  bindsym $mod+Shift+$down  move down
-  bindsym $mod+Shift+$up    move up
-  bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+$left  move left
+bindsym $mod+Shift+$down  move down
+bindsym $mod+Shift+$up    move up
+bindsym $mod+Shift+$right move right
 
-  floating_modifier $mod normal
+floating_modifier $mod normal
 
 # Workspace.
-  bindsym $mod+1 workspace $ws1
-  bindsym $mod+2 workspace $ws2
-  bindsym $mod+3 workspace $ws3
-  bindsym $mod+4 workspace $ws4
-  bindsym $mod+5 workspace $ws5
-  bindsym $mod+6 workspace $ws6
-  bindsym $mod+7 workspace $ws7
-  bindsym $mod+8 workspace $ws8
-  bindsym $mod+9 workspace $ws9
-  bindsym $mod+0 workspace $ws10
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
 
-  bindsym $mod+Shift+1 move container to workspace $ws1
-  bindsym $mod+Shift+2 move container to workspace $ws2
-  bindsym $mod+Shift+3 move container to workspace $ws3
-  bindsym $mod+Shift+4 move container to workspace $ws4
-  bindsym $mod+Shift+5 move container to workspace $ws5
-  bindsym $mod+Shift+6 move container to workspace $ws6
-  bindsym $mod+Shift+7 move container to workspace $ws7
-  bindsym $mod+Shift+8 move container to workspace $ws8
-  bindsym $mod+Shift+9 move container to workspace $ws9
-  bindsym $mod+Shift+0 move container to workspace $ws10
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
 
-  bindsym $mod+comma workspace prev
-  bindsym $mod+period workspace next
+bindsym $mod+comma workspace prev
+bindsym $mod+period workspace next
 
 # Layout.
-  bindsym $mod+f fullscreen
+bindsym $mod+f fullscreen
 
-  bindsym $mod+h splith
-  bindsym $mod+v splitv
+bindsym $mod+h splith
+bindsym $mod+v splitv
 
-  bindsym $mod+s layout stacking
-  bindsym $mod+w layout tabbed
-  bindsym $mod+e layout toggle split
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
 
-  bindsym $mod+Shift+space floating toggle
-  bindsym $mod+space       focus mode_toggle
-  bindsym $mod+a           focus parent
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space       focus mode_toggle
+bindsym $mod+a           focus parent
 
 # Other.
-  #bindsym XF86AudioPlay exec
-  #bindsym XF86AudioNext exec
-  #bindsym XF86AudioPrev exec
+#bindsym XF86AudioPlay exec
+#bindsym XF86AudioNext exec
+#bindsym XF86AudioPrev exec
 
-  bindsym XF86AudioMute exec        wpctl set-mute @DEFAULT_SINK@ toggle
-  bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
-  bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
+bindsym XF86AudioMute exec        wpctl set-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
 
-  #bindsym XF86MonBrightnessUp exec
-  #bindsym XF86MonBrightnessDown exec
+#bindsym XF86MonBrightnessUp exec
+#bindsym XF86MonBrightnessDown exec
 
 
-#-------------------------------
+#---------------
 # Modes.
-#-------------------------------
+#---------------
 
 # Scratchpad.
-  bindsym $mod+minus scratchpad show
-  bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
 
 # Resize.
 mode "resize" {
-  bindsym $left resize shrink width 10px
-  bindsym $down resize grow height 10px
-  bindsym $up resize shrink height 10px
-  bindsym $right resize grow width 10px
+	bindsym $left resize shrink width 10px
+	bindsym $down resize grow height 10px
+	bindsym $up resize shrink height 10px
+	bindsym $right resize grow width 10px
 
-  bindsym Return mode "default"
-  bindsym Escape mode "default"
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
 
 
-#-------------------------------
+#---------------
 # Status bar.
-#-------------------------------
+#---------------
 
 bar {
-  swaybar_command waybar
+	swaybar_command waybar
 }
