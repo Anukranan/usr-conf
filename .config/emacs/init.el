@@ -2,55 +2,61 @@
 ;; init.el ;;
 ;;---------;;
 
-;;============================================
+;;=============================
 ;; Initialization.
-;;============================================
+;;=============================
 
-;; Temporary fix for this foolish issue.
+;; TODO: Set shell variables to be sourced automatically.
 (progn
-  (setenv "XDG_CACHE_HOME" (concat (getenv "HOME") "/.cache"))
-  (setq-default backup-directory-alist '(("." . "~/.cache/emacs/"))))
+  (setenv "XDG_CACHE_HOME" (concat (getenv "HOME") "/.cache")))
 
+;; A bunch of top-level defaults (which is why they are in this section).
 (setq-default
  user-emacs-directory (expand-file-name "emacs" (getenv "XDG_CONFIG_HOME"))
  user-init-file       (expand-file-name "init.el" user-emacs-directory)
  custom-file          (expand-file-name "custom.el" user-emacs-directory)
 
- backup-dir             (concat (getenv "XDG_CACHE_HOME") "/emacs")
- backup-directory-alist '(("." . (concat (expand-file-name backup-dir) "/")))
- auto-save-list-file-prefix   (expand-file-name "autosave-"   backup-dir)
- ido-save-directory-list-file (expand-file-name "ido_history" backup-dir)
- desktop-dirname              user-emacs-directory
- desktop-path                 desktop-dirname
- desktop-base-file-name       "emacs.desktop"
- desktop-base-lock-name       (concat desktop-base-file-name ".lock")
+ backup-dir-i                   (concat (getenv "XDG_CACHE_HOME") "/emacs")
+ backup-directory-alist         '((".*" . ,backup-dir-i))
+ auto-save-file-name-transforms '((".*" . ,backup-dir-i))
+ auto-save-list-file-prefix     (expand-file-name "autosave-"   backup-dir-i)
+ ido-save-directory-list-file   (expand-file-name "ido_history" backup-dir-i)
 
- desktop-save                 t
- desktop-load-locked-desktop  nil
- desktop-auto-save-timeout    30
+ desktop-dirname        user-emacs-directory
+ desktop-path           desktop-dirname
+ desktop-base-file-name "emacs.desktop"
+ desktop-base-lock-name (concat desktop-base-file-name ".lock")
 
- backup-by-copying            t
+ desktop-save                t
+ desktop-save-mode           t
+ desktop-load-locked-desktop nil
+ desktop-auto-save-timeout   30
 
- initial-major-mode           'emacs-lisp-mode
- initial-scratch-message      nil
- inhibit-startup-message      t
- default-frame-alist          '((font . "Termsyn-11"))
- visible-bell                 nil)
+ backup-by-copying   t
+ delete-old-versions t
+ kept-new-versions   6
+ kept-old-versions   2
+ version-control     t
 
-(scroll-bar-mode     -1)
-(tool-bar-mode       -1)
-(tooltip-mode        -1)
-(menu-bar-mode       -1)
+ default-frame-alist     '((font . "Termsyn-11"))
+ initial-major-mode      'emacs-lisp-mode
+ initial-scratch-message nil
+ inhibit-startup-message t
+ visible-bell        nil
 
-(global-hl-line-mode -1)
-(show-paren-mode      1)
+ show-paren-mode     t
+ global-hl-line-mode nil
+ winner-mode         t)
 
-(desktop-save-mode    1)
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
 
 
-;;============================================
+;;=============================
 ;; Package management.
-;;============================================
+;;=============================
 
 (require 'package)
 (setq-default package-install-upgrade-built-in t
@@ -71,13 +77,13 @@
                 use-package-verbose t))
 
 
-;;============================================
+;;=============================
 ;; Functions.
-;;============================================
+;;=============================
 
-;;-------------
+;;--------------
 ;; Settings.
-;;-------------
+;;--------------
 
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces."
@@ -95,9 +101,9 @@
         c-basic-indent width
         c-basic-offset width))
 
-;;-------------
+;;--------------
 ;; Minor modes.
-;;-------------
+;;--------------
 
 (define-minor-mode linux-style-mode ()
   "Sets the default `cc-mode' style to linux, and enables
@@ -130,9 +136,9 @@ in a buffer."
           smart-tabs-mode t
           linux-style-mode t)))
 
-;;-------------
+;;--------------
 ;; Utiltity.
-;;-------------
+;;--------------
 
 (defun add-hook-list (hook-list function)
   "Apply a function to one or more hooks."
@@ -141,13 +147,13 @@ in a buffer."
         hook-list))
 
 
-;;============================================
+;;=============================
 ;; Configuration.
-;;============================================
+;;=============================
 
-;;-------------
+;;--------------
 ;; General settings.
-;;-------------
+;;--------------
 
 (setq-default tab-width 8
               indent-tabs-mode nil
@@ -181,17 +187,19 @@ in a buffer."
                    (unless (derived-mode-p
                             'emacs-lisp-mode 'lisp-mode 'scheme-mode)
                      (stabs-mode 1))))
+
 (add-hook-list '(java-mode-hook)
                #'(lambda ()
                    (setq fill-column 100
                          set-fill-column 100
                          display-fill-column-indicator-column 100)))
+
 (add-hook-list '(c-mode-hook c++-mode-hook java-mode-hook rust-mode-hook)
                #'linux-style-mode)
 
-;;-------------
+;;--------------
 ;; Desktop environment.
-;;-------------
+;;--------------
 
 ;; File manager.
 (use-package dired
@@ -205,25 +213,9 @@ in a buffer."
   :config (setq dired-kill-when-opening-new-dired-buffer t
                 dired-listing-switches "-ADHXro --group-directories-first"))
 
-;; System process manager.
-(use-package proced
-  :ensure nil)
-
-;; Torrent manager.
-(use-package transmission
-  :ensure t)
-
-;; Emacs window manager.
-(use-package popper
-  :ensure t)
-
-;; Window manager integration.
-(use-package sway
-  :ensure t)
-
-;;-------------
+;;--------------
 ;; Development environment.
-;;-------------
+;;--------------
 
 ;; Completion system.
 (use-package ido-at-point
@@ -261,16 +253,9 @@ in a buffer."
 (use-package magit
   :ensure t)
 
-;; Dissassemble C, C++, and Fortran.
-(use-package disaster
-  :ensure t
-  :commands (disaster)
-  :bind (:map c-mode-map ("C-c d" . disaster)))
-
-
-;;-------------
+;;--------------
 ;; Theming.
-;;-------------
+;;--------------
 
 (set-fringe-mode  0)
 
