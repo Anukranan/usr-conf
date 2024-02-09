@@ -6,7 +6,7 @@
 # Initialization.
 #---------------
 
-if [ $- != *i* ]; then
+if [[ $- != *i* ]]; then
 	return
 fi
 
@@ -14,9 +14,9 @@ fi
 # Environment.
 #---------------
 
-export EDITOR=mg
+export EDITOR='mg'
 
-if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+if [ "${XDG_SESSION_TYPE}" = "wayland" ]; then
 	export BEMENU_BACKEND=wayland
 
 	export MOZ_ENABLE_WAYLAND=1
@@ -38,8 +38,8 @@ fi
 # System.
 #---------------
 
-export HISTFILE="$XDG_CACHE_HOME"/sh_history
-export PATH="$PATH":"$HOME"/.local/bin
+export HISTFILE="${XDG_CACHE_HOME}/sh_history"
+export PATH="${PATH}":"${HOME}/.local/bin"
 export POSIXLY_CORRECT=yes
 
 #---------------
@@ -64,5 +64,5 @@ alias xrr='doas xbps-remove -Ro'
 # Theming.
 #---------------
 
-(cat "$XDG_CACHE_HOME"/wal/sequences &)
-. "$XDG_CACHE_HOME"/wal/colors-tty.sh
+(cat "${XDG_CACHE_HOME}/wal/sequences" &)
+. "${XDG_CACHE_HOME}/wal/colors-tty.sh"

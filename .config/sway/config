@@ -2,7 +2,7 @@
 # sway config #
 #-------------#
 
-include "$HOME/.cache/wal/colors-sway"
+include "${HOME}/.cache/wal/colors-sway"
 
 #---------------
 # Variables.
@@ -40,7 +40,7 @@ include "$HOME/.cache/wal/colors-sway"
 	set $ws10 10
 
 	# Theming.
-	set $bg $HOME/media/img/wal/w4.png
+	set $bg "${HOME}/media/img/wal/w4.png"
 
 	set $inner-gaps 4
 	set $font terminus
@@ -58,12 +58,12 @@ include "$HOME/.cache/wal/colors-sway"
 	set $term foot -L
 
 	# Clipboard.
-	set $clip-hist $HOME/.cache/clipboard_history.json
+	set $clip-hist "${HOME}/.cache/clipboard_history.json"
 	set $clipd wl-paste --watch clipman store --histpath=$clip-hist \
 	                    --notify --max-items=500 --unix
 
 	# Polkit.
-	set $polkitagentd /usr/libexec/polkit-mate-authentication-agent-1
+	set $polkitagentd "/usr/libexec/polkit-mate-authentication-agent-1"
 
 	# Menus.
 	set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 --bdr=$c3 \
@@ -71,13 +71,14 @@ include "$HOME/.cache/wal/colors-sway"
 	               --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb \
                        --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb \
                        --scf=$c3
-	set $menu      bemenu-run $menu-opts --fn=$font -p '[run]'
-	set $menu-clip clipman pick -t bemenu -T="$menu-opts --fn=$font \
+	set $menu-r    bemenu-run $menu-opts --fn=$font -p '[run]'
+	set $menu-c    clipman pick -t bemenu -T="$menu-opts --fn=$font \
                                     -p '[pick]'" --histpath=$clip-hist
-	set $menu-run  $menu | xargs swaymsg exec --
+	set $menu-clip $menu-c | xargs swaymsg exec --
+	set $menu-run  $menu-r | xargs swaymsg exec --
 
 	# Screenshots.
-	set $scrshot-file $HOME/media/img/scr/$(date +'%s.png')
+	set $scrshot-file "${HOME}/media/img/scr/$(date +'%s.png')"
 	set $scrshot-scr grimshot --notify save screen - > $scrshot-file
 	set $scrshot-sel grimshot --notify save area   - > $scrshot-file
 
@@ -263,7 +264,6 @@ bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_SINK@ 5%-
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 
-
 #---------------
 # Modes.
 #---------------
@@ -283,7 +283,6 @@ mode "resize" {
 	bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
-
 
 #---------------
 # Status bar.

@@ -10,15 +10,13 @@
 (progn
   (setenv "XDG_CACHE_HOME" (concat (getenv "HOME") "/.cache")))
 
-;; A bunch of top-level defaults (which is why they are in this section).
 (setq-default
  user-emacs-directory (expand-file-name "emacs" (getenv "XDG_CONFIG_HOME"))
  user-init-file       (expand-file-name "init.el" user-emacs-directory)
  custom-file          (expand-file-name "custom.el" user-emacs-directory)
 
  backup-dir-i                   (concat (getenv "XDG_CACHE_HOME") "/emacs")
- backup-directory-alist         '((".*" . ,backup-dir-i))
- auto-save-file-name-transforms '((".*" . ,backup-dir-i))
+ backup-directory-alist         `((".*" . ,backup-dir-i))
  auto-save-list-file-prefix     (expand-file-name "autosave-"   backup-dir-i)
  ido-save-directory-list-file   (expand-file-name "ido_history" backup-dir-i)
 
@@ -38,11 +36,11 @@
  kept-old-versions   2
  version-control     t
 
- default-frame-alist     '((font . "Termsyn-11"))
+ default-frame-alist     '((font . "Termsyn-12"))
  initial-major-mode      'emacs-lisp-mode
  initial-scratch-message nil
  inhibit-startup-message t
- visible-bell        nil
+ visible-bell            nil
 
  show-paren-mode     t
  global-hl-line-mode nil
