@@ -66,14 +66,14 @@ include "${HOME}/.cache/wal/colors-sway"
 	set $polkitagentd "/usr/libexec/polkit-mate-authentication-agent-1"
 
 	# Menus.
-	set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 --bdr=$c3 \
-	               -W 0.5 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 \
+	set $menu-opts -i -l 20 -P '>' -c -w --fixed-height -B 1 -W 0.5 \
+	               --bdr=$c3 --tb=$cb --tf=$c3 --fb=$cb --ff=$c3 --cb=$c7 \
 	               --cf=$c3 --nb=$cb --nf=$cf --hb=$c3 --hf=$cb --fbb=$cb \
                        --fbf=$cf --sb=$c6 --sf=$c3 --ab=$cb --af=$cf --scb=$cb \
                        --scf=$c3
 	set $menu-r    bemenu-run $menu-opts --fn=$font -p '[run]'
-	set $menu-c    clipman pick -t bemenu -T="$menu-opts --fn=$font \
-                                    -p '[pick]'" --histpath=$clip-hist
+	set $menu-c    clipman pick --tool=bemenu --tool-args="$menu-opts \
+	               --fn=$font -p '[pick]'" --histpath=$clip-hist
 	set $menu-run  $menu-r | xargs swaymsg exec --
 	set $menu-clip $menu-c | xargs swaymsg exec --
 
@@ -119,6 +119,8 @@ for_window {
 	[app_id="imv"]              floating enable
 	[app_id="zathura"]          floating enable
 	[app_id="prismlauncher"]    floating enable
+	[app_id="thunar"]           floating enable
+	[app_id="Thunar"]           floating enable
 }
 popup_during_fullscreen ignore
 
@@ -157,7 +159,7 @@ exec {
 	pipewire
 
 	$clipd
-	$idle
+#	$idle
 	fnott
 	autotiling
 }

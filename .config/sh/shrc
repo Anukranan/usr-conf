@@ -6,6 +6,7 @@
 # Initialization.
 #---------------
 
+# shrc is for an interactive shell.
 if [[ $- != *i* ]]; then
 	return
 fi
@@ -14,42 +15,18 @@ fi
 # Environment.
 #---------------
 
-export EDITOR='mg'
-
-if [ "${XDG_SESSION_TYPE}" = "wayland" ]; then
-	export BEMENU_BACKEND=wayland
-
-	export MOZ_ENABLE_WAYLAND=1
-
-	export QT_QPA_PLATFORM=wayland-egl
-	export QT_WAYLAND_FORCE_DPI=physical
-	export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-
-	export ELM_ENGINE=wayland_egl
-	export ELM_DISPLAY=wl
-	export ECORE_EVAS_ENGINE=wayland_egl
-
-	export SDL_VIDEODRIVER=wayland
-
-	export _JAVA_AWT_WM_NONREPARENTING=1
-fi
-
-#---------------
-# System.
-#---------------
-
-export HISTFILE="${XDG_CACHE_HOME}/sh_history"
-export PATH="${PATH}":"${HOME}/.local/bin"
-export POSIXLY_CORRECT=yes
+export EDITOR='mg -n'
 
 #---------------
 # Aliases.
 #---------------
 
+# Core.
 alias ls='ls -ADH1 --color=auto --group-directories-first'
 alias grep='grep --color=auto'
+alias mg='mg -n'
 
-# XBPS.
+# Package management.
 alias xq='xbps-query'
 alias xqe='xbps-query -Rs'
 alias xqi='xbps-query -l'
